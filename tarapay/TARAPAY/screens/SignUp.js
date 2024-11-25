@@ -9,8 +9,8 @@ import {
 } from "react-native";
 
 const SignUp = ({ navigation }) => {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+    const [correo, setEmail] = useState('');
+    const [contrasena, setPassword] = useState('');
 
     const handleLogin = async () => {
         try {
@@ -19,7 +19,7 @@ const SignUp = ({ navigation }) => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ email, password }),
+                body: JSON.stringify({ correo, contrasena }),
             });
 
             const data = await response.json();
@@ -42,7 +42,7 @@ const SignUp = ({ navigation }) => {
             <TextInput
                 style={styles.input}
                 placeholder="Correo Electrónico"
-                value={email}
+                value={correo}
                 onChangeText={setEmail}
                 keyboardType="email-address"
             />
@@ -50,7 +50,7 @@ const SignUp = ({ navigation }) => {
                 style={styles.input}
                 placeholder="Contraseña"
                 secureTextEntry
-                value={password}
+                value={contrasena}
                 onChangeText={setPassword}
             />
             <TouchableOpacity style={styles.button} onPress={handleLogin}>

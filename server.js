@@ -29,13 +29,14 @@ pool.query('SELECT NOW()', (err, res) => {
 
 
 // Endpoint para verificar inicio de sesión
+// Cambiar la comparación de contraseñas y eliminar errores en el endpoint
 app.post('/login', async (req, res) => {
-    const { email, password } = req.body;
-    console.log('Datos recibidos:', { email, password });
+    const { correo, contrasena } = req.body;
+    console.log('Datos recibidos:', { correo, contrasena });
 
     try {
         // Consulta para encontrar el usuario por correo
-        const result = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
+        const result = await pool.query('SELECT * FROM usuario WHERE correo = $1', [correo]);
         console.log('Resultado de la consulta:', result.rows);
 
         if (result.rows.length === 0) {
@@ -46,8 +47,8 @@ app.post('/login', async (req, res) => {
         const user = result.rows[0];
         console.log('Usuario encontrado:', user);
 
-        // Comparar contraseñas como texto plano
-        if (password !== user.password) {
+        // Comparar contraseñas directamente
+        if (contrasena !== user.contrasena) {
             console.log('Contraseña incorrecta');
             return res.status(401).json({ message: 'Contraseña incorrecta' });
         }
@@ -60,13 +61,14 @@ app.post('/login', async (req, res) => {
     }
 });
 
+
 // Endpoint para registrar un nuevo usuario
 app.post('/register', async (req, res) => {
-    const { rut, email, password, name, lastName, phoneNumber, passengerType } = req.body;
+    const { rut, correo, contrasena, nombre, apellido, telefono, tipo_usuario } = req.body;
 
     try {
         // Verifica si el correo ya está registrado
-        const existingUser = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
+        const existingUser = await pool.query('SELECT * FROM usuario WHERE correo = $1', [correo]);
 
         if (existingUser.rows.length > 0) {
             return res.status(400).json({ message: 'El correo ya está registrado' });
@@ -74,8 +76,8 @@ app.post('/register', async (req, res) => {
 
         // Inserta el nuevo usuario en la base de datos
         const result = await pool.query(
-            'INSERT INTO users (rut, email, password, name, last_name, phone_number, passenger_type) VALUES ($1, $2, $3, $4, $5, $6, $7)',
-            [rut, email, password, name, lastName, phoneNumber, passengerType]
+            'INSERT INTO usuario (rut, correo, contrasena, nombre, apellido, telefono, tipo_usuario) VALUES ($1, $2, $3, $4, $5, $6, $7)',
+            [rut, correo, contrasena, nombre, apellido, telefono, tipo_usuario]
         );
 
         res.status(201).json({ message: 'Usuario registrado exitosamente' });

@@ -5,5 +5,5 @@ import SignUp from "./SignUp"
 export {
     Home,
     Scan,
-    SignUp
+    SignUp,
 };
