@@ -20,8 +20,8 @@ export default function App() {
     if (!scanned) {  // Verifica que solo se procese si no ha sido escaneado
       setScanned(true);
       console.log(`Scanned URL: ${data}`);  // Muestra el URL en la consola
-      alert(`Scanned URL: ${data}`);  // Muestra el URL en una alerta
-      Linking.openURL(data).catch(err => console.error("Failed to open URL:", err));  // Redirige al URL escaneado
+            Linking.openURL(data).catch(err => console.error("Failed to open URL:", err));  // Redirige al URL escaneado
+            alert(`Scanned URL: ${data}`);
     }
   };
 

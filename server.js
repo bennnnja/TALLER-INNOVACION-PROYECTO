@@ -4,7 +4,7 @@ const { Pool } = require('pg');
 const bcrypt = require('bcryptjs');
 
 const app = express();
-const port = 3000;
+const port = 50587;
 
 // Middleware
 app.use(bodyParser.json());
@@ -12,10 +12,10 @@ app.use(bodyParser.json());
 // PostgreSQL configuration
 const pool = new Pool({
     user: 'postgres',     // Reemplaza con tu usuario de PostgreSQL
-    host: 'localhost',         // O el host donde está PostgreSQL
-    database: 'postgres', // Reemplaza con tu nombre de base de datos
-    password: 'unap123', // Reemplaza con tu contraseña de PostgreSQL
-    port: 5432,                // Puerto por defecto de PostgreSQL
+    host: 'junction.proxy.rlwy.net',         // O el host donde está PostgreSQL
+    database: 'railway', // Reemplaza con tu nombre de base de datos
+    password: 'ynbsXYDxitIulsUlBKVmvBRRDefYQVuD', // Reemplaza con tu contraseña de PostgreSQL
+    port: 50587,                // Puerto por defecto de PostgreSQL
 });
 
 pool.query('SELECT NOW()', (err, res) => {
@@ -91,5 +91,5 @@ app.post('/register', async (req, res) => {
 
 // Iniciar el servidor
 app.listen(port, () => {
-    console.log(`Servidor ejecutándose en http://localhost:${port}`);
+    console.log(`Servidor ejecutándose en junction.proxy.rlwy.net:${port}`);
 });
