@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 
-const Profile = () => {
+const Profile = ({ navigation }) => {
     const user = {
         name: "Nicolás Oyanader Rojas",
         age: 24,
@@ -9,6 +9,15 @@ const Profile = () => {
         lastPayment: "HOY 14:35 hrs",
         lastBus: "Línea 9 Iquique",
         photo: require('../assets/icons/user.png'), // Ruta de la imagen
+    };
+
+    // Función para cerrar sesión
+    const handleLogout = () => {
+        // Redirigir a la pantalla de inicio de sesión
+        navigation.reset({
+            index: 0,
+            routes: [{ name: 'SignUp' }], // Reemplaza el stack con SignUp
+        });
     };
 
     return (
@@ -28,7 +37,7 @@ const Profile = () => {
             </View>
 
             {/* Botón de cerrar sesión */}
-            <TouchableOpacity style={styles.logoutButton}>
+            <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
                 <Text style={styles.logoutText}>Cerrar Sesión</Text>
             </TouchableOpacity>
         </View>

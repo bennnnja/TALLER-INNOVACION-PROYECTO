@@ -178,12 +178,12 @@ const Tabs = () => {
                 options={{
                     tabBarIcon: ({ focused }) => (
                         <Image
-                            source={require('../assets/icons/user.png')}
+                            source={icons.user}
                             resizeMode="contain"
                             style={{
                                 width: 25,
                                 height: 25,
-                                tintColor: focused ? COLORS.primary : COLORS.gray,
+                                tintColor: focused ? COLORS.white : COLORS.secondary
                             }}
                         />
                     ),
