@@ -178,23 +178,6 @@ const Tabs = () => {
                 options={{
                     tabBarIcon: ({ focused }) => (
                         <Image
-                            source={require('../assets/icons/user.png')}
-                            resizeMode="contain"
-                            style={{
-                                width: 25,
-                                height: 25,
-                                tintColor: focused ? COLORS.primary : COLORS.gray,
-                            }}
-                        />
-                    ),
-                }}
-            />
-            <Tab.Screen
-                name="User"
-                component={Home}
-                options={{
-                    tabBarIcon: ({ focused }) => (
-                        <Image
                             source={icons.user}
                             resizeMode="contain"
                             style={{

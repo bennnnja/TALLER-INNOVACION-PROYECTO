@@ -24,7 +24,7 @@ const Register = ({ navigation }) => {
 
     const handleRegister = async () => {
         try {
-            const response = await fetch('http://192.168.1.102:3000/register', {
+            const response = await fetch('postgresql://postgres:ynbsXYDxitIulsUlBKVmvBRRDefYQVuD@junction.proxy.rlwy.net:50587/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
