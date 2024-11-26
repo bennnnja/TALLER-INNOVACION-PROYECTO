@@ -26,40 +26,41 @@ pool.query('SELECT NOW()', (err, res) => {
     }
 });
 
-
 // Endpoint para verificar inicio de sesión
-// Cambiar la comparación de contraseñas y eliminar errores en el endpoint
 app.post('/login', async (req, res) => {
     const { correo, contrasena } = req.body;
-    console.log('Datos recibidos:', { correo, contrasena });
 
     try {
-        // Consulta para encontrar el usuario por correo
-        const result = await pool.query('SELECT * FROM usuario WHERE correo = $1', [correo]);
-        console.log('Resultado de la consulta:', result.rows);
+        const user = await pool.query(`
+            SELECT nombre, apellido, correo, telefono, tipo_usuario, estado, saldo
+            FROM usuario
+            WHERE correo = $1 AND contrasena = $2
+        `, [correo, contrasena]);
 
-        if (result.rows.length === 0) {
-            console.log('Usuario no encontrado');
-            return res.status(400).json({ message: 'Usuario no encontrado' });
+        if (user.rows.length === 0) {
+            return res.status(401).json({ message: 'Usuario o contraseña incorrectos' });
         }
 
-        const user = result.rows[0];
-        console.log('Usuario encontrado:', user);
+        // Elimina campos innecesarios y devuelve solo los relevantes
+        const userData = user.rows[0];
 
-        // Comparar contraseñas directamente
-        if (contrasena !== user.contrasena) {
-            console.log('Contraseña incorrecta');
-            return res.status(401).json({ message: 'Contraseña incorrecta' });
-        }
-
-        console.log('Inicio de sesión exitoso');
-        res.status(200).json({ message: 'Inicio de sesión exitoso' });
+        res.status(200).json({
+            message: 'Inicio de sesión exitoso',
+            user: {
+                nombre: userData.nombre,
+                apellido: userData.apellido,
+                correo: userData.correo,
+                telefono: userData.telefono,
+                tipo_usuario: userData.tipo_usuario,
+                estado: userData.estado,
+                saldo: userData.saldo,
+            }
+        });
     } catch (error) {
-        console.error('Error en el servidor:', error);
+        console.error('Error al consultar la base de datos:', error);
         res.status(500).json({ message: 'Error interno del servidor' });
     }
 });
-
 
 // Endpoint para registrar un nuevo usuario
 app.post('/register', async (req, res) => {
@@ -74,7 +75,7 @@ app.post('/register', async (req, res) => {
         }
 
         // Insertar nuevo usuario
-        const result = await pool.query(
+        await pool.query(
             'INSERT INTO usuario (rut, correo, contrasena, nombre, apellido, telefono, tipo_usuario, estado, saldo) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)',
             [rut, correo, contrasena, nombre, apellido, telefono, tipo_usuario, estado, "0"] // Saldo inicial 0
         );
@@ -84,7 +85,6 @@ app.post('/register', async (req, res) => {
         console.error('Error al registrar usuario:', error.message);
         res.status(500).json({ message: 'Error interno del servidor', error: error.message });
     }
-    
 });
 
 // Iniciar el servidor
