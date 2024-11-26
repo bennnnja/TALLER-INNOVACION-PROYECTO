@@ -34,7 +34,10 @@ const Home = ( {navigation}) => {
                 <Text style={styles.saldoText}>SALDO</Text>
                 <View style={styles.saldoRow}>
                     <Text style={styles.saldoAmount}>$$$$$</Text>
-                    <TouchableOpacity style={styles.walletButton}>
+                    <TouchableOpacity
+                        style={styles.walletButton}
+                        onPress={() => navigation.navigate("AgregarSaldo")} // Redirección a AgregarSaldo
+                    >
                         <Image
                             source={icons.wallet}
                             style={styles.walletIcon}
@@ -44,16 +47,20 @@ const Home = ( {navigation}) => {
             </View>
         );
     }
+    
 
     // Renderizar historial y publicidad
     function renderHistorialPublicidad() {
         return (
             <View style={styles.historialPublicidadContainer}>
                 {/* Historial */}
-                <View style={styles.historialContainer}>
-                    <Text style={styles.historialText}>HISTORIAL</Text>
+                <TouchableOpacity
+                    style={styles.historialContainer}
+                    onPress={() => navigation.navigate("HistorialScreen")}
+                >
+                    <Text style={styles.historialText}>Ultimos Viajes</Text>
                     <ScrollView style={styles.historialList}>
-                        {[...Array(5)].map((_, index) => (
+                        {[...Array(6)].map((_, index) => (
                             <View key={index} style={styles.historialItem}>
                                 <Text style={styles.historialItemText}>
                                     Item {index + 1}
@@ -61,7 +68,7 @@ const Home = ( {navigation}) => {
                             </View>
                         ))}
                     </ScrollView>
-                </View>
+                </TouchableOpacity>
                 {/* Publicidad */}
                 <View style={styles.publicidadContainer}>
                     <Image

@@ -12,31 +12,35 @@ import {
 
 const Register = ({ navigation }) => {
     const [rut, setRut] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [name, setName] = useState('');
-    const [lastName, setLastName] = useState('');
-    const [phoneNumber, setPhoneNumber] = useState('');
-    const [passengerType, setPassengerType] = useState('Estudiante');
+    const [correo, setCorreo] = useState('');
+    const [contrasena, setContrasena] = useState('');
+    const [nombre, setNombre] = useState('');
+    const [apellido, setApellido] = useState('');
+    const [telefono, setTelefono] = useState('');
+    const [tipoUsuario, setTipoUsuario] = useState('Estudiante');
     const [modalVisible, setModalVisible] = useState(false);
 
-    const passengerTypes = ['Estudiante', 'Adulto', 'Adulto Mayor'];
+    const tiposUsuario = ['Estudiante', 'Adulto', 'Adulto Mayor', 'Chofer'];
 
     const handleRegister = async () => {
+        // Determinar estado según el tipo de usuario
+        const estado = tipoUsuario === 'Adulto' ? 'Aceptado' : 'Pendiente';
+
         try {
-            const response = await fetch('postgresql://postgres:ynbsXYDxitIulsUlBKVmvBRRDefYQVuD@junction.proxy.rlwy.net:50587/register', {
+            const response = await fetch('http://192.168.1.102:50587/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
                     rut,
-                    email,
-                    password,
-                    name,
-                    lastName,
-                    phoneNumber,
-                    passengerType,
+                    correo,
+                    contrasena,
+                    nombre,
+                    apellido,
+                    telefono,
+                    tipo_usuario: tipoUsuario,
+                    estado,
                 }),
             });
 
@@ -44,7 +48,7 @@ const Register = ({ navigation }) => {
 
             if (response.status === 201) {
                 Alert.alert('Éxito', data.message);
-                navigation.navigate('SignUp'); // Redirige a la pantalla de inicio de sesión
+                navigation.navigate('SignUp'); // Redirigir a la pantalla de inicio de sesión
             } else {
                 Alert.alert('Error', data.message);
             }
@@ -66,46 +70,45 @@ const Register = ({ navigation }) => {
             <TextInput
                 style={styles.input}
                 placeholder="Correo Electrónico"
-                value={email}
-                onChangeText={setEmail}
+                value={correo}
+                onChangeText={setCorreo}
                 keyboardType="email-address"
             />
             <TextInput
                 style={styles.input}
                 placeholder="Contraseña"
-                value={password}
-                onChangeText={setPassword}
+                value={contrasena}
+                onChangeText={setContrasena}
                 secureTextEntry
             />
             <TextInput
                 style={styles.input}
                 placeholder="Nombre"
-                value={name}
-                onChangeText={setName}
+                value={nombre}
+                onChangeText={setNombre}
             />
             <TextInput
                 style={styles.input}
                 placeholder="Apellido"
-                value={lastName}
-                onChangeText={setLastName}
+                value={apellido}
+                onChangeText={setApellido}
             />
             <TextInput
                 style={styles.input}
                 placeholder="Número de Teléfono"
-                value={phoneNumber}
-                onChangeText={setPhoneNumber}
+                value={telefono}
+                onChangeText={setTelefono}
                 keyboardType="phone-pad"
             />
 
-            <Text style={styles.label}>Tipo de Pasajero:</Text>
+            <Text style={styles.label}>Tipo de Usuario:</Text>
             <TouchableOpacity
                 style={styles.dropdown}
                 onPress={() => setModalVisible(true)}
             >
-                <Text style={styles.dropdownText}>{passengerType}</Text>
+                <Text style={styles.dropdownText}>{tipoUsuario}</Text>
             </TouchableOpacity>
 
-            {/* Modal para la selección */}
             <Modal
                 animationType="slide"
                 transparent={true}
@@ -115,13 +118,13 @@ const Register = ({ navigation }) => {
                 <View style={styles.modalContainer}>
                     <View style={styles.modalContent}>
                         <FlatList
-                            data={passengerTypes}
+                            data={tiposUsuario}
                             keyExtractor={(item) => item}
                             renderItem={({ item }) => (
                                 <TouchableOpacity
                                     style={styles.modalItem}
                                     onPress={() => {
-                                        setPassengerType(item);
+                                        setTipoUsuario(item);
                                         setModalVisible(false);
                                     }}
                                 >

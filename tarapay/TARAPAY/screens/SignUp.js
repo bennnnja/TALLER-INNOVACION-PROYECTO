@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import {
     View,
     Text,
@@ -7,34 +7,56 @@ import {
     Alert,
     StyleSheet,
 } from "react-native";
+import { UserContext } from '../UserContext'; // Ruta corregida
 
 const SignUp = ({ navigation }) => {
     const [correo, setEmail] = useState('');
     const [contrasena, setPassword] = useState('');
+    const { setUser } = useContext(UserContext);
 
     const handleLogin = async () => {
         try {
-            const response = await fetch('http://192.168.1.109:50587/login', {
+            const response = await fetch('http://192.168.1.102:50587/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ correo, contrasena }),
             });
-
+    
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Error en la solicitud');
+            }
+    
             const data = await response.json();
 
-            if (response.status === 200) {
-                Alert.alert('Éxito', data.message);
-                navigation.navigate('HomeTabs'); // Redirige a la pantalla principal
-            } else {
-                Alert.alert('Error', data.message);
+            console.log('Respuesta JSON desde el servidor:', data);
+
+    
+            if (!data.user) {
+                throw new Error('Datos del usuario no encontrados');
             }
+    
+            // Actualiza el contexto del usuario con los datos relevantes
+            setUser({
+                nombre: data.user.nombre || '',
+                apellido: data.user.apellido || '',
+                correo: data.user.correo || '',
+                telefono: data.user.telefono || '',
+                tipo_usuario: data.user.tipo_usuario || '',
+                estado: data.user.estado || '',
+                saldo: data.user.saldo || 0,
+            });
+            
+    
+            Alert.alert('Éxito', data.message);
+            navigation.navigate('HomeTabs');
         } catch (error) {
-            Alert.alert('Error', 'No se pudo conectar con el servidor');
+            Alert.alert('Error', error.message || 'No se pudo conectar con el servidor');
         }
     };
-
+    
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Iniciar Sesión</Text>
