@@ -3,6 +3,8 @@ import React from 'react';
 
 import Register from './screens/Register';
 import { SignUp } from "./screens";
+import Home from './screens/Home'; // Asegúrate de que la ruta de Home sea correcta
+import AgregarSaldo from './screens/AgregarSaldo'; // Asegúrate de que la ruta de AgregarSaldo sea correcta
 import { createStackNavigator } from "@react-navigation/stack";
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
@@ -25,6 +27,7 @@ const App = () => {
         "Roboto-Bold" : require('./assets/fonts/Roboto-Bold.ttf'),
         "Roboto-Regular" : require('./assets/fonts/Roboto-Regular.ttf'),
     });
+    
     
     if(!loaded){
         return null;
@@ -55,9 +58,19 @@ const App = () => {
                         headerTitleStyle: { fontWeight: "bold" },
                     }} 
                 />
+                <Stack.Screen name="Home" component={Home} />
+                <Stack.Screen 
+                    name="AgregarSaldo" 
+                    component={AgregarSaldo} 
+                    options={{
+                        headerShown: true, // Muestra el encabezado solo para esta pantalla
+                        title: "Agregar Saldo", // Título del encabezado
+                    }} 
+                />
             </Stack.Navigator>
         </NavigationContainer>
     );
 };
+
 
 export default App;

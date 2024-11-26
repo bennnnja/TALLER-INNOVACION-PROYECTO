@@ -34,7 +34,10 @@ const Home = ( {navigation}) => {
                 <Text style={styles.saldoText}>SALDO</Text>
                 <View style={styles.saldoRow}>
                     <Text style={styles.saldoAmount}>$$$$$</Text>
-                    <TouchableOpacity style={styles.walletButton}>
+                    <TouchableOpacity
+                        style={styles.walletButton}
+                        onPress={() => navigation.navigate("AgregarSaldo")} // Redirección a AgregarSaldo
+                    >
                         <Image
                             source={icons.wallet}
                             style={styles.walletIcon}
@@ -44,6 +47,7 @@ const Home = ( {navigation}) => {
             </View>
         );
     }
+    
 
     // Renderizar historial y publicidad
     function renderHistorialPublicidad() {
