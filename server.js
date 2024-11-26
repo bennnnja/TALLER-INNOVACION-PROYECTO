@@ -1,7 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const { Pool } = require('pg');
-const bcrypt = require('bcryptjs');
 
 const app = express();
 const port = 50587;
@@ -9,22 +8,22 @@ const port = 50587;
 // Middleware
 app.use(bodyParser.json());
 
-// PostgreSQL configuration
+// Configuración de PostgreSQL
 const pool = new Pool({
-    user: 'postgres',     // Reemplaza con tu usuario de PostgreSQL
-    host: 'junction.proxy.rlwy.net',         // O el host donde está PostgreSQL
-    database: 'railway', // Reemplaza con tu nombre de base de datos
-    password: 'ynbsXYDxitIulsUlBKVmvBRRDefYQVuD', // Reemplaza con tu contraseña de PostgreSQL
-    port: 50587,                // Puerto por defecto de PostgreSQL
+    user: 'postgres',
+    host: 'junction.proxy.rlwy.net',
+    database: 'railway',
+    password: 'ynbsXYDxitIulsUlBKVmvBRRDefYQVuD',
+    port: 50587,
 });
 
+// Verificar conexión
 pool.query('SELECT NOW()', (err, res) => {
     if (err) {
         console.error('Error conectando a PostgreSQL:', err);
     } else {
         console.log('Conexión exitosa a PostgreSQL:', res.rows);
     }
-    // pool.end(); // Comentado para evitar cerrar el pool
 });
 
 
@@ -64,32 +63,31 @@ app.post('/login', async (req, res) => {
 
 // Endpoint para registrar un nuevo usuario
 app.post('/register', async (req, res) => {
-    const { rut, correo, contrasena, nombre, apellido, telefono, tipo_usuario } = req.body;
+    const { rut, correo, contrasena, nombre, apellido, telefono, tipo_usuario, estado } = req.body;
 
     try {
-        // Verifica si el correo ya está registrado
+        // Verificar si el correo ya está registrado
         const existingUser = await pool.query('SELECT * FROM usuario WHERE correo = $1', [correo]);
 
         if (existingUser.rows.length > 0) {
             return res.status(400).json({ message: 'El correo ya está registrado' });
         }
 
-        // Inserta el nuevo usuario en la base de datos
+        // Insertar nuevo usuario
         const result = await pool.query(
-            'INSERT INTO usuario (rut, correo, contrasena, nombre, apellido, telefono, tipo_usuario) VALUES ($1, $2, $3, $4, $5, $6, $7)',
-            [rut, correo, contrasena, nombre, apellido, telefono, tipo_usuario]
+            'INSERT INTO usuario (rut, correo, contrasena, nombre, apellido, telefono, tipo_usuario, estado, saldo) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)',
+            [rut, correo, contrasena, nombre, apellido, telefono, tipo_usuario, estado, "0"] // Saldo inicial 0
         );
 
         res.status(201).json({ message: 'Usuario registrado exitosamente' });
     } catch (error) {
-        console.error('Error al registrar usuario:', error);
-        res.status(500).json({ message: 'Error interno del servidor' });
+        console.error('Error al registrar usuario:', error.message);
+        res.status(500).json({ message: 'Error interno del servidor', error: error.message });
     }
+    
 });
-
-
 
 // Iniciar el servidor
 app.listen(port, () => {
-    console.log(`Servidor ejecutándose en junction.proxy.rlwy.net:${port}`);
+    console.log(`Servidor ejecutándose en http://junction.proxy.rlwy.net:${port}`);
 });
