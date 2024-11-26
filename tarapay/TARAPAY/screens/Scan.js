@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Text, View, StyleSheet, Button } from "react-native";
+import { Text, View, StyleSheet, Button, Alert } from "react-native";
 import { CameraView, Camera } from "expo-camera";
-import * as Linking from 'expo-linking';  // Importa Linking
+import { useNavigation } from "@react-navigation/native";
+import axios from "axios";
 
-export default function App() {
+export default function ScanScreen({ route, navigation }) {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
+  const { rutPasajero, tipoUsuario } = route.params; // Datos del usuario logueado
 
   useEffect(() => {
     const getCameraPermissions = async () => {
@@ -16,12 +18,35 @@ export default function App() {
     getCameraPermissions();
   }, []);
 
-  const handleBarcodeScanned = ({ type, data }) => {
-    if (!scanned) {  // Verifica que solo se procese si no ha sido escaneado
+  const handleBarcodeScanned = async ({ data }) => {
+    if (!scanned) {
       setScanned(true);
-      console.log(`Scanned URL: ${data}`);  // Muestra el URL en la consola
-            Linking.openURL(data).catch(err => console.error("Failed to open URL:", err));  // Redirige al URL escaneado
-            alert(`Scanned URL: ${data}`);
+
+      try {
+        // Simula que el QR contiene el RUT del chofer
+        const rutChofer = data;
+
+        // Enviar datos al backend
+        const response = await axios.post("http://192.168.1.109:50587/transaction", {
+          rutPasajero,
+          rutChofer,
+          tipoUsuario,
+        });
+
+        Alert.alert("Éxito", `Pago realizado. Monto: $${response.data.tarifa}`);
+
+        // Navegar a la pantalla de pago, pasando el RUT del pasajero, el RUT del chofer y el monto
+        navigation.navigate("PayScreen", {
+          choferRut: rutChofer,
+          monto: response.data.tarifa,
+          pasajeroRut: rutPasajero, // Pasamos el RUT del pasajero aquí
+        });
+      } catch (error) {
+        console.error("Error en la transacción:", error);
+        Alert.alert("Error", error.response?.data?.message || "Error al procesar la transacción");
+      } finally {
+        setScanned(false);
+      }
     }
   };
 
@@ -36,14 +61,9 @@ export default function App() {
     <View style={styles.container}>
       <CameraView
         onBarcodeScanned={scanned ? undefined : handleBarcodeScanned}
-        barcodeScannerSettings={{
-          barcodeTypes: ["qr", "pdf417"],
-        }}
         style={StyleSheet.absoluteFillObject}
       />
-      {scanned && (
-        <Button title={"Tap to Scan Again"} onPress={() => setScanned(false)} />
-      )}
+      {scanned && <Button title={"Tap to Scan Again"} onPress={() => setScanned(false)} />}
     </View>
   );
 }
