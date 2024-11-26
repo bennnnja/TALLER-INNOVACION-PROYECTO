@@ -189,12 +189,12 @@ const Tabs = () => {
                     ),
                     tabBarButton: (props) => (
                         <TabBarCustomButton
-                            {...props}
+                        {...props}
                         />
                     )
                 }}
             />
-        </Tab.Navigator>
+                   </Tab.Navigator>
     )
 }
 
