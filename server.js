@@ -87,6 +87,60 @@ app.post('/register', async (req, res) => {
     }
 });
 
+// Endpoint para procesar la transacción
+app.post("/transaction", async (req, res) => {
+    const { rutPasajero, rutChofer, tipoUsuario } = req.body;
+
+    // Tarifas por tipo de usuario
+    const tarifas = {
+        estudiante: 220,
+        adulto: 600,
+        adulto_mayor: 350,
+    };
+
+    const tarifa = tarifas[tipoUsuario.toLowerCase()];
+    if (!tarifa) {
+        return res.status(400).json({ message: "Tipo de usuario no válido" });
+    }
+
+    try {
+        // Iniciar la transacción
+        await pool.query('BEGIN');
+      
+        // Obtener el saldo del pasajero
+        const pasajeroResult = await pool.query("SELECT saldo FROM usuario WHERE rut = $1", [rutPasajero]);
+        if (pasajeroResult.rows.length === 0) {
+            return res.status(404).json({ message: "Pasajero no encontrado" });
+        }
+
+        const saldoPasajero = pasajeroResult.rows[0].saldo;
+        if (saldoPasajero < tarifa) {
+            return res.status(400).json({ message: "Saldo insuficiente" });
+        }
+
+        // Registrar la transacción
+        await pool.query(
+            "INSERT INTO transaccion (fecha, hora, monto, rut_chofer, usuario_rut) VALUES (CURRENT_DATE, CURRENT_TIME, $1, $2, $3)",
+            [tarifa, rutChofer, rutPasajero]
+        );
+
+        // Actualizar saldo del pasajero y del chofer
+        await pool.query("UPDATE usuario SET saldo = saldo - $1 WHERE rut = $2", [tarifa, rutPasajero]);
+        await pool.query("UPDATE usuario SET saldo = saldo + $1 WHERE rut = $2", [tarifa, rutChofer]);
+
+        // Confirmar la transacción
+        await pool.query('COMMIT');
+
+        // Responder al cliente
+        res.status(200).json({ message: "Transacción exitosa", tarifa });
+
+    } catch (error) {
+        // En caso de error, revertir la transacción
+        await pool.query('ROLLBACK');
+        console.error("Error al procesar la transacción:", error);
+        res.status(500).json({ message: "Error interno del servidor" });
+    }
+});
 
 
 // Iniciar el servidor
