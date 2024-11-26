@@ -3,7 +3,6 @@ import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet } from 'reac
 
 const AgregarSaldo = () => {
   const handleWebpay = () => {
-    // Aquí manejarás la integración con Webpay
     console.log('Botón Webpay presionado');
   };
 
@@ -17,22 +16,10 @@ const AgregarSaldo = () => {
       />
       <TouchableOpacity style={styles.webpayButton} onPress={handleWebpay}>
         <Image 
-      source={require('../assets/webpay.png')} // Ruta correcta desde la ubicación de AgregarSaldo.js
-      style={styles.webpayImage} 
-  />
+          source={require('../assets/webpay.png')} 
+          style={styles.webpayImage} 
+        />
       </TouchableOpacity>
-      {/* Footer con navegación */}
-      <View style={styles.footer}>
-        <TouchableOpacity style={styles.iconButton}>
-          <Text style={styles.iconText}>🏠</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.iconButton}>
-          <Text style={styles.iconText}>📷</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.iconButton}>
-          <Text style={styles.iconText}>💰</Text>
-        </TouchableOpacity>
-      </View>
     </View>
   );
 };
@@ -69,23 +56,6 @@ const styles = StyleSheet.create({
     width: 200,
     height: 50,
     resizeMode: 'contain',
-  },
-  footer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    width: '100%',
-    paddingVertical: 20,
-    backgroundColor: '#f9f9f9',
-    position: 'absolute',
-    bottom: 0,
-  },
-  iconButton: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  iconText: {
-    fontSize: 24,
-    color: '#0055AA',
   },
 });
 
