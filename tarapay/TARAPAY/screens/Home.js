@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
     SafeAreaView,
     View,
@@ -8,14 +8,36 @@ import {
     StyleSheet,
     ScrollView,
 } from "react-native";
+import { UserContext } from "../UserContext"; // Importar el contexto
 import { COLORS, SIZES, FONTS, icons, images } from "../constants";
+import axios from "axios";
 
-const Home = ( {navigation}) => {
+const Home = ({ navigation }) => {
+    const { user } = useContext(UserContext); // Obtener datos del usuario desde el contexto
+    const [ultimasTransacciones, setUltimasTransacciones] = useState([]); // Estado para las transacciones
+
+    // Obtener las últimas transacciones
+    useEffect(() => {
+        const fetchTransacciones = async () => {
+            if (user?.rut) {
+                try {
+                    const response = await axios.post("http://192.168.1.85:50587/historial", {
+                        rutPasajero: user.rut,
+                    });
+                    setUltimasTransacciones(response.data.historial.slice(0, 6)); // Obtener las últimas 6 transacciones
+                } catch (error) {
+                    console.error("Error al cargar las transacciones:", error);
+                }
+            }
+        };
+
+        fetchTransacciones();
+    }, [user?.rut]);
+
     // Renderizar el encabezado
     function renderHeader() {
         return (
             <View style={styles.headerContainer}>
-
                 <TouchableOpacity>
                     <Image source={icons.logout} style={styles.iconHeader} />
                 </TouchableOpacity>
@@ -29,10 +51,10 @@ const Home = ( {navigation}) => {
             <View style={styles.saldoContainer}>
                 <Text style={styles.saldoText}>SALDO</Text>
                 <View style={styles.saldoRow}>
-                    <Text style={styles.saldoAmount}>$$$$$</Text>
+                    <Text style={styles.saldoAmount}>${user?.saldo || 0}</Text>
                     <TouchableOpacity
                         style={styles.walletButton}
-                        onPress={() => navigation.navigate("AgregarSaldo")} // Redirección a AgregarSaldo
+                        onPress={() => navigation.navigate("AgregarSaldo")}
                     >
                         <Image
                             source={icons.wallet}
@@ -43,28 +65,45 @@ const Home = ( {navigation}) => {
             </View>
         );
     }
-    
 
-    // Renderizar historial y publicidad
+    // Renderizar historial con estilo mejorado
     function renderHistorialPublicidad() {
         return (
             <View style={styles.historialPublicidadContainer}>
                 {/* Historial */}
-                <TouchableOpacity
-                    style={styles.historialContainer}
-                    onPress={() => navigation.navigate("HistorialScreen")}
-                >
-                    <Text style={styles.historialText}>Ultimos Viajes</Text>
+                <View style={styles.historialContainer}>
+                    <Text style={styles.historialText}>Últimas Transacciones</Text>
                     <ScrollView style={styles.historialList}>
-                        {[...Array(6)].map((_, index) => (
-                            <View key={index} style={styles.historialItem}>
-                                <Text style={styles.historialItemText}>
-                                    Item {index + 1}
-                                </Text>
-                            </View>
-                        ))}
-                    </ScrollView>
-                </TouchableOpacity>
+                            {ultimasTransacciones.map((item) => (
+                                <View key={item.id} style={styles.historialItem}>
+                                    <Text style={styles.historialItemText}>
+                                        <Text style={styles.boldText}>Fecha: </Text>
+                                        {new Date(item.fecha).toLocaleDateString()} -{" "}
+                                        <Text style={styles.boldText}>Hora: </Text>
+                                        {item.hora.split(".")[0]}
+                                    </Text>
+                                    <Text
+                                        style={[
+                                            styles.historialItemText,
+                                            { color: item.monto > 0 ? "green" : "red" },
+                                        ]}
+                                    >
+                                        <Text style={styles.boldText}>Monto: </Text>
+                                        {item.monto > 0 ? `+${item.monto}` : item.monto}
+                                    </Text>
+                                </View>
+                            ))}
+                        </ScrollView>
+                    {/* Botón para ver el historial completo */}
+                    <TouchableOpacity
+                        style={styles.verHistorialButton}
+                        onPress={() => navigation.navigate("HistorialScreen")}
+                    >
+                        <Text style={styles.verHistorialText}>
+                            Ver Historial Completo
+                        </Text>
+                    </TouchableOpacity>
+                </View>
                 {/* Publicidad */}
                 <View style={styles.publicidadContainer}>
                     <Image
@@ -103,11 +142,10 @@ const Home = ( {navigation}) => {
     );
 };
 
-// Estilos
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#93C9FD", // Color de fondo
+        backgroundColor: "#93C9FD",
     },
     headerContainer: {
         flexDirection: "row",
@@ -118,7 +156,7 @@ const styles = StyleSheet.create({
     iconHeader: {
         width: 40,
         height: 40,
-        tintColor: "#000", // Color de los iconos
+        tintColor: "#000",
     },
     contentContainer: {
         flex: 1,
@@ -127,14 +165,14 @@ const styles = StyleSheet.create({
     },
     saldoContainer: {
         width: "100%",
-        backgroundColor: "#D6EFFF", // Color del fondo de saldo
+        backgroundColor: "#D6EFFF",
         padding: 10,
         borderRadius: 20,
         marginBottom: 20,
     },
     saldoText: {
         fontSize: 22,
-        color: "#000", // Color del texto
+        color: "#000",
         textAlign: "center",
     },
     saldoRow: {
@@ -146,16 +184,16 @@ const styles = StyleSheet.create({
     saldoAmount: {
         fontSize: 40,
         fontWeight: "bold",
-        color: "#000", // Color del monto
+        color: "#000",
     },
     walletButton: {
         width: 50,
         height: 50,
-        backgroundColor: "#FFFFFF", // Fondo blanco para el botón
+        backgroundColor: "#FFFFFF",
         borderRadius: 25,
         alignItems: "center",
         justifyContent: "center",
-        marginLeft: 20, // Separación del monto
+        marginLeft: 20,
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.2,
@@ -165,7 +203,7 @@ const styles = StyleSheet.create({
     walletIcon: {
         width: 30,
         height: 30,
-        tintColor: "#000", // Color del icono de billetera
+        tintColor: "#000",
     },
     historialPublicidadContainer: {
         flexDirection: "row",
@@ -174,12 +212,12 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
     },
     historialContainer: {
-        width: "50%", // Mismo tamaño horizontal que la publicidad
-        backgroundColor: "#C8E3FF", // Fondo del historial
+        width: "50%",
+        backgroundColor: "#C8E3FF",
         borderRadius: 10,
         padding: 10,
-        height: 350, // Altura extendida del historial
-        marginRight: 10, // Espacio entre historial y publicidad
+        height: 350,
+        marginRight: 10,
     },
     historialText: {
         fontSize: 22,
@@ -191,28 +229,42 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     historialItem: {
-        backgroundColor: "#FFFFFF", // Fondo de los elementos del historial
         borderRadius: 8,
         padding: 10,
         marginBottom: 8,
     },
     historialItemText: {
         fontSize: 16,
-        color: "#000", // Color del texto
+        color: "#000",
+    },
+    boldText: {
+        fontWeight: "bold",
+    },
+    verHistorialButton: {
+        backgroundColor: "#1E90FF",
+        padding: 10,
+        borderRadius: 8,
+        alignItems: "center",
+        marginTop: 10,
+    },
+    verHistorialText: {
+        fontSize: 16,
+        color: "#FFFFFF",
+        fontWeight: "bold",
     },
     publicidadContainer: {
-        width: "45%", // Mismo tamaño horizontal que el historial
-        marginLeft: 10, // Espaciado adicional para mantener separación
+        width: "45%",
+        marginLeft: 10,
     },
     publicidadImage: {
         width: "100%",
-        height: 500, // Altura extendida de la publicidad
+        height: 500,
         borderRadius: 10,
     },
     menuContainer: {
         flexDirection: "row",
         justifyContent: "space-around",
-        backgroundColor: "#80B4F7", // Fondo del menú
+        backgroundColor: "#80B4F7",
         paddingVertical: 10,
         borderTopLeftRadius: 10,
         borderTopRightRadius: 10,
@@ -220,7 +272,7 @@ const styles = StyleSheet.create({
     menuIcon: {
         width: 25,
         height: 25,
-        tintColor: "#FFFFFF", // Color de los iconos del menú
+        tintColor: "#FFFFFF",
     },
 });
 

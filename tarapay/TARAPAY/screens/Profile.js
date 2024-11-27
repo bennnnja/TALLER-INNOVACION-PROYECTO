@@ -32,9 +32,9 @@ const Profile = ({ navigation }) => {
                 <Text style={styles.infoText}>Nombre: <Text style={styles.infoHighlight}>{user.nombre || 'No disponible'}</Text></Text>
                 <Text style={styles.infoText}>Apellido: <Text style={styles.infoHighlight}>{user.apellido || 'No disponible'}</Text></Text>
                 <Text style={styles.infoText}>Correo: <Text style={styles.infoHighlight}>{user.correo || 'No disponible'}</Text></Text>
+                <Text style={styles.infoText}>Teléfono: <Text style={styles.infoHighlight}>{user.telefono || 'No disponible'}</Text></Text>
+                <Text style={styles.infoText}>Estado: <Text style={styles.infoHighlight}>{user.estado || 'No disponible'}</Text></Text>
                 <Text style={styles.infoText}>Tipo de usuario: <Text style={styles.infoHighlight}>{user.tipo_usuario || 'No disponible'}</Text></Text>
-                <Text style={styles.infoText}>Último pago: <Text style={styles.infoHighlightRed}>{user.ultimo_pago || 'No disponible'}</Text></Text>
-                <Text style={styles.infoText}>Último bus: <Text style={styles.infoHighlight}>{user.ultimo_bus || 'No disponible'}</Text></Text>
             </View>
 
             {/* Botón de cerrar sesión */}
@@ -78,10 +78,6 @@ const styles = StyleSheet.create({
     infoHighlight: {
         fontWeight: 'bold',
         color: '#333',
-    },
-    infoHighlightRed: {
-        fontWeight: 'bold',
-        color: '#FF0000',
     },
     logoutButton: {
         backgroundColor: '#1E90FF',
