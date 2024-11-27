@@ -1,6 +1,5 @@
 import 'react-native-gesture-handler';
 import React from 'react';
-
 import Register from './screens/Register';
 import { SignUp } from "./screens";
 import Home from './screens/Home'; // Asegúrate de que la ruta de Home sea correcta
@@ -11,6 +10,8 @@ import { useFonts } from 'expo-font';
 import Tabs from "./navigation/tabs";
 import HistorialScreen from "./screens/HistorialScreen"; // Importar la pantalla del historial
 import { UserProvider } from './UserContext'; // Ruta corregida
+import Scan from './screens/Scan'; // Asegúrate de que la ruta sea correcta
+import Pay from './screens/Pay'; // Asegúrate de que la ruta sea correcta
 
 const theme = {
     ...DefaultTheme,
@@ -47,6 +48,8 @@ const App = () => {
                 <Stack.Screen name="SignUp" component={SignUp} />
                 <Stack.Screen name="Register" component={Register} />
                 <Stack.Screen name="HomeTabs" component={Tabs} />
+                <Stack.Screen name="Scan" component={Scan} />
+                <Stack.Screen name="Pay" component={Pay} />
                 
                 {/* Nueva pantalla del historial */}
                 <Stack.Screen 
