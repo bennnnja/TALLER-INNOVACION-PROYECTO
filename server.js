@@ -32,7 +32,7 @@ app.post('/login', async (req, res) => {
 
     try {
         const user = await pool.query(`
-            SELECT nombre, apellido, correo, telefono, tipo_usuario, estado, saldo
+            SELECT nombre, apellido, rut, correo, telefono, tipo_usuario, estado, saldo
             FROM usuario
             WHERE correo = $1 AND contrasena = $2
         `, [correo, contrasena]);
@@ -47,8 +47,10 @@ app.post('/login', async (req, res) => {
         res.status(200).json({
             message: 'Inicio de sesión exitoso',
             user: {
+                
                 nombre: userData.nombre,
                 apellido: userData.apellido,
+                rut: userData.rut,
                 correo: userData.correo,
                 telefono: userData.telefono,
                 tipo_usuario: userData.tipo_usuario,
@@ -59,6 +61,7 @@ app.post('/login', async (req, res) => {
     } catch (error) {
         console.error('Error al consultar la base de datos:', error);
         res.status(500).json({ message: 'Error interno del servidor' });
+        
     }
 });
 
@@ -99,18 +102,19 @@ app.post("/transaction", async (req, res) => {
     };
 
     const tarifa = tarifas[tipoUsuario.toLowerCase()];
+    console.log(tarifa,tipoUsuario,rutPasajero);
     if (!tarifa) {
-        return res.status(400).json({ message: "Tipo de usuario no válido" });
+        return res.status(400).json({ message: "Tipo de usuario no válido"});
+        
     }
 
     try {
         // Iniciar la transacción
         await pool.query('BEGIN');
-      
         // Obtener el saldo del pasajero
         const pasajeroResult = await pool.query("SELECT saldo FROM usuario WHERE rut = $1", [rutPasajero]);
         if (pasajeroResult.rows.length === 0) {
-            return res.status(404).json({ message: "Pasajero no encontrado" });
+            return res.status(404).json({ message: rutPasajero});
         }
 
         const saldoPasajero = pasajeroResult.rows[0].saldo;
@@ -138,7 +142,7 @@ app.post("/transaction", async (req, res) => {
         // En caso de error, revertir la transacción
         await pool.query('ROLLBACK');
         console.error("Error al procesar la transacción:", error);
-        res.status(500).json({ message: "Error interno del servidor" });
+        res.status(500).json({ message: "Error interno del servidor",error: error.message });
     }
 });
 

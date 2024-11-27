@@ -16,7 +16,7 @@ const SignUp = ({ navigation }) => {
 
     const handleLogin = async () => {
         try {
-            const response = await fetch('http://192.168.1.102:50587/login', {
+            const response = await fetch('http://192.168.1.109:50587/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -40,6 +40,7 @@ const SignUp = ({ navigation }) => {
     
             // Actualiza el contexto del usuario con los datos relevantes
             setUser({
+                rut: data.user.rut || '',
                 nombre: data.user.nombre || '',
                 apellido: data.user.apellido || '',
                 correo: data.user.correo || '',
