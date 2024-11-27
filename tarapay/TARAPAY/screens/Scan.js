@@ -1,17 +1,18 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Text, View, StyleSheet, Button, Alert } from "react-native";
-import { CameraView, Camera } from "expo-camera";
-import { useNavigation } from "@react-navigation/native";
+import { Camera, CameraView } from "expo-camera";  // Usamos CameraView para la versión que estás utilizando
+import { UserContext } from "../UserContext"; // Importa el contexto
 import axios from "axios";
 
-export default function ScanScreen({ route, navigation }) {
+export default function ScanScreen({ navigation }) {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
-  const { rutPasajero, tipoUsuario } = route.params; // Datos del usuario logueado
+  const { user } = useContext(UserContext); // Obtenemos los datos del usuario desde el contexto
 
   useEffect(() => {
     const getCameraPermissions = async () => {
       const { status } = await Camera.requestCameraPermissionsAsync();
+      console.log("Estado del permiso de la cámara:", status);  // Verifica el estado del permiso
       setHasPermission(status === "granted");
     };
 
@@ -19,42 +20,57 @@ export default function ScanScreen({ route, navigation }) {
   }, []);
 
   const handleBarcodeScanned = async ({ data }) => {
+    console.log("QR Escaneado:", data); // Verifica si el QR se escanea correctamente
+
     if (!scanned) {
       setScanned(true);
 
       try {
-        // Simula que el QR contiene el RUT del chofer
-        const rutChofer = data;
+        const rutChofer = data; // El código QR contiene el RUT del chofer
+        console.log("RUT del chofer escaneado: ", rutChofer);
+        
+        // Validar que el usuario logueado tiene un RUT
+        if (!user || !user.rut) {
+            Alert.alert("Error", "El usuario no tiene un RUT válido.");
+            setScanned(false);
+            return; // Salir si el usuario no tiene un RUT
+        }
 
-        // Enviar datos al backend
-        const response = await axios.post("http://192.168.1.109:50587/transaction", {
-          rutPasajero,
+        Alert.alert("RUT",user.rut);
+        console.log("Datos enviados al backend:", {
+          rutPasajero: user.rut,
           rutChofer,
-          tipoUsuario,
+          tipoUsuario: user.tipo_usuario,
+      });
+        // Enviar datos al backend
+        
+        const response = await axios.post("http://192.168.1.109:50587/transaction", {
+            rutPasajero: user.rut, // Usamos el RUT del pasajero desde el contexto
+            rutChofer,
+            tipoUsuario: user.tipo_usuario, // También obtenemos el tipo de usuario desde el contexto
         });
-
+        console.log("Respuesta del backend: ", response.data); // Verifica la respuesta del backend
         Alert.alert("Éxito", `Pago realizado. Monto: $${response.data.tarifa}`);
-
-        // Navegar a la pantalla de pago, pasando el RUT del pasajero, el RUT del chofer y el monto
-        navigation.navigate("PayScreen", {
-          choferRut: rutChofer,
-          monto: response.data.tarifa,
-          pasajeroRut: rutPasajero, // Pasamos el RUT del pasajero aquí
+        // Navegar a la pantalla de pago, pasando los datos relevantes
+        navigation.navigate("Pay", {
+            choferRut: rutChofer,
+            monto: response.data.tarifa,
+            pasajeroRut: user.rut,
         });
-      } catch (error) {
+    } catch (error) {
         console.error("Error en la transacción:", error);
         Alert.alert("Error", error.response?.data?.message || "Error al procesar la transacción");
-      } finally {
+    } finally {
         setScanned(false);
-      }
+    }
     }
   };
 
   if (hasPermission === null) {
-    return <Text>Requesting for camera permission</Text>;
+    return <Text>Solicitando permiso para usar la cámara...</Text>;
   }
   if (hasPermission === false) {
-    return <Text>No access to camera</Text>;
+    return <Text>No tienes acceso a la cámara</Text>;
   }
 
   return (
@@ -62,8 +78,11 @@ export default function ScanScreen({ route, navigation }) {
       <CameraView
         onBarcodeScanned={scanned ? undefined : handleBarcodeScanned}
         style={StyleSheet.absoluteFillObject}
+        barCodeScannerSettings={{
+          barCodeTypes: ["qr", "pdf417"], // Asegúrate de que el tipo de código esté configurado correctamente
+        }}
       />
-      {scanned && <Button title={"Tap to Scan Again"} onPress={() => setScanned(false)} />}
+      {scanned && <Button title={"Presiona para escanear de nuevo"} onPress={() => setScanned(false)} />}
     </View>
   );
 }
