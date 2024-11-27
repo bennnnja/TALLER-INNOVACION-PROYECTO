@@ -15,11 +15,7 @@ const Home = ( {navigation}) => {
     function renderHeader() {
         return (
             <View style={styles.headerContainer}>
-                {/* Ícono de usuario con navegación a Profile */}
-                <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
-                    <Image source={icons.user} style={styles.iconHeader} />
-                </TouchableOpacity>
-                {/* Ícono de logout */}
+
                 <TouchableOpacity>
                     <Image source={icons.logout} style={styles.iconHeader} />
                 </TouchableOpacity>
