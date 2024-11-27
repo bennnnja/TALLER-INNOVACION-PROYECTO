@@ -21,7 +21,7 @@ const Home = ({ navigation }) => {
         const fetchTransacciones = async () => {
             if (user?.rut) {
                 try {
-                    const response = await axios.post("http://192.168.1.85:50587/historial", {
+                    const response = await axios.post("http://192.168.1.87:50587/historial", {
                         rutPasajero: user.rut,
                     });
                     setUltimasTransacciones(response.data.historial.slice(0, 6)); // Obtener las últimas 6 transacciones

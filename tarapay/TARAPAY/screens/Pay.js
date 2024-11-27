@@ -12,7 +12,7 @@ export default function PayScreen({ route, navigation }) {
     const fetchTransactionDetails = async () => {
       try {
         // Aquí puedes hacer una llamada al backend para obtener la información de la transacción
-        const response = await axios.get(`http://192.168.1.109:50587/transaction/details?rutPasajero=${pasajeroRut}&rutChofer=${choferRut}`);
+        const response = await axios.get(`http://192.168.1.87:50587/transaction/details?rutPasajero=${pasajeroRut}&rutChofer=${choferRut}`);
         setTransactionDetails(response.data);
       } catch (error) {
         console.error("Error al obtener los detalles de la transacción:", error);
