@@ -90,6 +90,36 @@ app.post('/register', async (req, res) => {
     }
 });
 
+
+app.post("/historial", async (req, res) => {
+    const { rutPasajero } = req.body;
+    console.log("Solicitud recibida para /historial con rutPasajero:", rutPasajero);
+
+    try {
+        const result = await pool.query(`
+            SELECT id_transaccion AS id, fecha, hora, monto, rut_chofer
+            FROM transaccion
+            WHERE usuario_rut = $1
+            ORDER BY fecha DESC, hora DESC
+        `, [rutPasajero]);
+
+        if (result.rows.length === 0) {
+            console.log("No se encontraron transacciones para el usuario:", rutPasajero);
+            return res.status(404).json({ message: "No se encontraron transacciones para este usuario" });
+        }
+
+        console.log("Transacciones encontradas:", result.rows);
+        res.status(200).json({ historial: result.rows });
+    } catch (error) {
+        console.error("Error al obtener el historial:", error);
+        res.status(500).json({ message: "Error interno del servidor" });
+    }
+});
+
+
+
+
+
 // Endpoint para procesar la transacción
 app.post("/transaction", async (req, res) => {
     const { rutPasajero, rutChofer, tipoUsuario } = req.body;
