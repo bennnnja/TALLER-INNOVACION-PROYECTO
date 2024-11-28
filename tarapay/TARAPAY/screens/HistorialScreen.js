@@ -18,7 +18,7 @@ const HistorialScreen = ({ navigation }) => {
     // Función para cargar el historial desde el servidor
     const fetchHistorial = async () => {
         try {
-            const response = await fetch("http://192.168.1.85:50587/historial", {
+            const response = await fetch("http://192.168.1.109:50587/historial", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ rutPasajero: user?.rut }), // Envía el rut del usuario logueado

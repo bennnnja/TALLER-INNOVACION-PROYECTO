@@ -90,6 +90,7 @@ app.post('/register', async (req, res) => {
     }
 });
 
+//Backend para el historial
 
 app.post("/historial", async (req, res) => {
     const { rutPasajero } = req.body;

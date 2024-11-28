@@ -36,21 +36,21 @@ export default function ScanScreen({ navigation }) {
             return; // Salir si el usuario no tiene un RUT
         }
 
-        Alert.alert("RUT",user.rut);
-        console.log("Datos enviados al backend:", {
+       /* console.log("Datos enviados al backend:", {
           rutPasajero: user.rut,
           rutChofer,
           tipoUsuario: user.tipo_usuario,
-      });
+      }); */
         // Enviar datos al backend
         
-        const response = await axios.post("http://192.168.1.85:50587/transaction", {
+        const response = await axios.post("http://192.168.1.109:50587/transaction", {
             rutPasajero: user.rut, // Usamos el RUT del pasajero desde el contexto
             rutChofer,
             tipoUsuario: user.tipo_usuario, // También obtenemos el tipo de usuario desde el contexto
         });
         console.log("Respuesta del backend: ", response.data); // Verifica la respuesta del backend
         Alert.alert("Éxito", `Pago realizado. Monto: $${response.data.tarifa}`);
+       
         // Navegar a la pantalla de pago, pasando los datos relevantes
         navigation.navigate("Pay", {
             choferRut: rutChofer,
@@ -59,7 +59,7 @@ export default function ScanScreen({ navigation }) {
         });
     } catch (error) {
         console.error("Error en la transacción:", error);
-        Alert.alert("Error", error.response?.data?.message || "Error al procesar la transacción");
+        Alert.alert("Pago Rechazado", error.response?.data?.message || "Error al procesar la transacción");
     } finally {
         setScanned(false);
     }
