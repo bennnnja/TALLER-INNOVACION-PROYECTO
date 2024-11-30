@@ -60,6 +60,7 @@ const Profile = ({ navigation }) => {
     }
 
     return (
+        
         <SafeAreaView style={styles.container}>
             <ScrollView contentContainerStyle={[styles.scrollContainer, { paddingBottom: 100 }]}>
                 <View style={styles.profileHeader}>
