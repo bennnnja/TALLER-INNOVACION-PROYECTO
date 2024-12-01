@@ -1,15 +1,37 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
+import React, { useState, useContext } from 'react';
+import { View, Text, TouchableOpacity, Image, StyleSheet, Alert } from 'react-native';
+import axios from 'axios';
+import { UserContext } from '../UserContext'; // Importa el contexto del usuario
 
 const AgregarSaldo = () => {
   const [selectedAmount, setSelectedAmount] = useState(null);
+  const { user, setUser } = useContext(UserContext); // Obtén el usuario actual del contexto
 
-  const handleWebpay = () => {
-    if (selectedAmount) {
+  const handleWebpay = async () => {
+    if (!selectedAmount) {
+      Alert.alert('Error', 'Por favor, selecciona un monto antes de continuar.');
+      return;
+    }
+
+    try {
       console.log(`Monto seleccionado: ${selectedAmount}`);
-      // Aquí puedes implementar la lógica para enviar el monto seleccionado a Webpay
-    } else {
-      console.log('Por favor, selecciona un monto antes de continuar');
+
+      // Llamada al backend para actualizar el saldo y registrar la transacción
+      const response = await axios.post('http://192.168.1.88:50587/add-saldo', {
+        rutUsuario: user.rut,
+        monto: selectedAmount,
+      });
+
+      // Actualizar el saldo en el contexto del usuario
+      setUser((prevUser) => ({
+        ...prevUser,
+        saldo: prevUser.saldo + selectedAmount,
+      }));
+
+      Alert.alert('Éxito', `Saldo agregado exitosamente. Nuevo saldo: $${response.data.nuevoSaldo}`);
+    } catch (error) {
+      console.error('Error al agregar saldo:', error);
+      Alert.alert('Error', 'No se pudo agregar el saldo. Intenta de nuevo más tarde.');
     }
   };
 
@@ -17,12 +39,12 @@ const AgregarSaldo = () => {
     <View style={styles.container}>
       <Text style={styles.title}>AGREGAR SALDO</Text>
       <View style={styles.buttonContainer}>
-        {[1000, 3000, 5000, 10000].map(amount => (
+        {[1000, 3000, 5000, 10000].map((amount) => (
           <TouchableOpacity
             key={amount}
             style={[
               styles.amountButton,
-              selectedAmount === amount && styles.selectedButton
+              selectedAmount === amount && styles.selectedButton,
             ]}
             onPress={() => setSelectedAmount(amount)}
           >
@@ -31,9 +53,9 @@ const AgregarSaldo = () => {
         ))}
       </View>
       <TouchableOpacity style={styles.webpayButton} onPress={handleWebpay}>
-        <Image 
-          source={require('../assets/webpay.png')} 
-          style={styles.webpayImage} 
+        <Image
+          source={require('../assets/webpay.png')}
+          style={styles.webpayImage}
         />
       </TouchableOpacity>
     </View>
@@ -78,9 +100,9 @@ const styles = StyleSheet.create({
     marginTop: 30,
   },
   webpayImage: {
-    width: 250, // Tamaño ajustado de la imagen
-    height: 70, // Altura ajustada de la imagen
-    resizeMode: 'contain', // Escala proporcional a la imagen
+    width: 250,
+    height: 70,
+    resizeMode: 'contain',
   },
 });
 

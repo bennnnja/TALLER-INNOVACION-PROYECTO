@@ -232,7 +232,46 @@ app.post("/transaction", async (req, res) => {
     }
 });
 
-
+// Endpoint para agregar saldo al usuario
+app.post('/add-saldo', async (req, res) => {
+    const { rutUsuario, monto } = req.body;
+  
+    console.log(`Solicitud para agregar saldo: rutUsuario=${rutUsuario}, monto=${monto}`);
+  
+    try {
+      // Iniciar la transacción
+      await pool.query('BEGIN');
+  
+      // Actualizar el saldo del usuario
+      const usuarioResult = await pool.query(
+        'UPDATE usuario SET saldo = saldo + $1 WHERE rut = $2 RETURNING saldo',
+        [monto, rutUsuario]
+      );
+  
+      if (usuarioResult.rows.length === 0) {
+        throw new Error('Usuario no encontrado.');
+      }
+  
+      const nuevoSaldo = usuarioResult.rows[0].saldo;
+  
+      // Registrar la transacción
+      await pool.query(
+        `INSERT INTO transaccion (fecha, hora, monto, rut_chofer, usuario_rut, tipo_transaccion)
+         VALUES (CURRENT_DATE, CURRENT_TIME, $1, NULL, $2, 'Positiva')`,
+        [monto, rutUsuario]
+      );
+  
+      // Confirmar la transacción
+      await pool.query('COMMIT');
+  
+      res.status(200).json({ message: 'Saldo agregado exitosamente', nuevoSaldo });
+    } catch (error) {
+      // Revertir la transacción en caso de error
+      await pool.query('ROLLBACK');
+      console.error('Error al agregar saldo:', error.message);
+      res.status(500).json({ message: 'Error al agregar saldo.', error: error.message });
+    }
+  });
 
 
 // Iniciar el servidor
