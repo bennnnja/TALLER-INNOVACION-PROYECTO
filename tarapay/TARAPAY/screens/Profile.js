@@ -109,20 +109,10 @@ const Profile = ({ navigation }) => {
                 <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
                     <Text style={styles.logoutText}>Cerrar Sesión</Text>
                 </TouchableOpacity>
-
-                {/* Banner de publicidad con texto y GIF */}
-                <View style={styles.adBanner}>
-                    <Image
-                        source={{ uri: 'https://media.giphy.com/media/3o6Zt7I9tbI58M9Rfy/giphy.gif' }} // URL del GIF
-                        style={styles.adImage}
-                    />
-                    <View style={styles.adTextContainer}>
-                        <Text style={styles.adText}>¡Promoción Especial! Obtén un descuento en tu próximo viaje con nosotros.</Text>
-                    </View>
-                </View>
             </ScrollView>
         </SafeAreaView>
     );
+    
 };
 
 const styles = StyleSheet.create({
@@ -211,35 +201,6 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: '#003366',
     },
-
-    // Estilos del banner
-    adBanner: {
-        width: '90%',
-        height: 150,
-        marginTop: 10,
-        backgroundColor: '#f8f8f8',
-        borderTopWidth: 1,
-        borderColor: '#ddd',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: 10,
-        position: 'absolute', 
-        bottom: 170,  // Ponerlo encima del área de cerrar sesión
-    },
-    adTextContainer: {
-        position: 'absolute',
-        bottom: 10,
-    },
-    adText: {
-        fontSize: 14,
-        textAlign: 'center',
-        fontWeight: 'bold',
-    },
-    adImage: {
-        width: 100,
-        height: 100,
-        resizeMode: 'contain',
-    }
 });
 
 export default Profile;
