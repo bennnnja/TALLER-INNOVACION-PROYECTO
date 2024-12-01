@@ -121,7 +121,7 @@ const Home = ({ navigation }) => {
                                     ]}
                                 >
                                     <Text style={styles.boldText}>Monto: </Text>
-                                    {item.monto > 0 ? `+${item.monto}` : item.monto}
+                                    {item.monto > 0 ? `${item.monto}` : item.monto}
                                 </Text>
                             </View>
                         ))}

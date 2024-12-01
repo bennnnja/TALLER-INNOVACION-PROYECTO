@@ -18,7 +18,7 @@ const HistorialScreen = ({ navigation }) => {
     const fetchHistorial = async () => {
         console.log("Iniciando fetchHistorial...");
         try {
-            const response = await fetch("http://192.168.1.109:50587/historial", {
+            const response = await fetch("http://192.168.1.88:50587/historial", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -72,15 +72,15 @@ const HistorialScreen = ({ navigation }) => {
                             <Text
                                 style={[
                                     styles.itemText,
-                                    { color: item.color }, // Usar el color definido por el servidor
+                                    { color: item.color }, // Color asignado desde el servidor
                                 ]}
                             >
                                 <Text style={styles.boldText}>Monto: </Text>
-                                {item.monto}
+                                {item.monto} {/* Monto con signo "+" o "-" */}
                             </Text>
                             <Text style={styles.itemText}>
                                 <Text style={styles.boldText}>RUT Chofer: </Text>
-                                {item.rut_chofer}
+                                {item.rut_chofer || item.rut_pasajero} {/* Mostrar el rut relevante */}
                             </Text>
                         </View>
                     ))}

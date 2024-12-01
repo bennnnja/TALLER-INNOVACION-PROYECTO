@@ -94,36 +94,35 @@ app.post('/register', async (req, res) => {
 
 // Endpoint para obtener el historial de transacciones
 // Endpoint para obtener el historial completo según el tipo de usuario
-// Endpoint para obtener el historial completo según el tipo de usuario
 app.post('/historial', async (req, res) => {
     const { rut, tipoUsuario } = req.body;
 
     console.log(`Solicitud para /historial con rut: ${rut}, tipoUsuario: ${tipoUsuario}`);
 
     try {
-        let result;
+        let result = [];
 
         if (tipoUsuario.toLowerCase() === 'chofer') {
             // Obtener transacciones como chofer
             const choferResult = await pool.query(`
-                SELECT id_transaccion AS id, fecha, hora, monto, usuario_rut AS rut_pasajero
+                SELECT id_transaccion AS id, fecha, hora, monto, tipo_transaccion, usuario_rut AS rut_pasajero
                 FROM transaccion
                 WHERE rut_chofer = $1
                 ORDER BY fecha DESC, hora DESC
             `, [rut]);
 
             const pasajeroResult = await pool.query(`
-                SELECT id_transaccion AS id, fecha, hora, monto, rut_chofer
+                SELECT id_transaccion AS id, fecha, hora, monto, tipo_transaccion, rut_chofer
                 FROM transaccion
                 WHERE usuario_rut = $1
                 ORDER BY fecha DESC, hora DESC
             `, [rut]);
 
-            result = [...pasajeroResult.rows, ...choferResult.rows];
+            result = [...choferResult.rows, ...pasajeroResult.rows];
         } else {
             // Obtener transacciones solo como pasajero
             const pasajeroResult = await pool.query(`
-                SELECT id_transaccion AS id, fecha, hora, monto, rut_chofer
+                SELECT id_transaccion AS id, fecha, hora, monto, tipo_transaccion, rut_chofer
                 FROM transaccion
                 WHERE usuario_rut = $1
                 ORDER BY fecha DESC, hora DESC
@@ -137,8 +136,25 @@ app.post('/historial', async (req, res) => {
             return res.status(404).json({ message: "No se encontraron transacciones para este usuario" });
         }
 
-        console.log("Transacciones encontradas:", result);
-        res.status(200).json({ historial: result });
+        // Procesar transacciones para definir monto y color
+        const historialProcesado = result.map((transaccion) => {
+            let { monto, tipo_transaccion } = transaccion;
+            let color = tipo_transaccion === "Positiva" ? "green" : "red";
+
+            // Ajustar monto según tipo_transaccion
+            monto = tipo_transaccion === "Positiva" ? `+${monto}` : `-${monto}`;
+
+            // Para chofer, transacciones "Negativas" son positivas para él
+            if (tipoUsuario.toLowerCase() === 'chofer' && tipo_transaccion === "Negativa") {
+                monto = `+${transaccion.monto}`;
+                color = "green";
+            }
+
+            return { ...transaccion, monto, color };
+        });
+
+        console.log("Transacciones procesadas:", historialProcesado);
+        res.status(200).json({ historial: historialProcesado });
     } catch (error) {
         console.error("Error al obtener el historial:", error.message);
         res.status(500).json({ message: "Error interno del servidor" });
