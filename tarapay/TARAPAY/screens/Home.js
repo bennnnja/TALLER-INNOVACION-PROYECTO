@@ -11,6 +11,7 @@ import {
 import { UserContext } from "../UserContext"; // Importar el contexto
 import { COLORS, SIZES, FONTS, icons, images } from "../constants";
 import axios from "axios";
+import { LinearGradient } from 'expo-linear-gradient'; // Asegúrate de instalar expo-linear-gradient
 
 const Home = ({ navigation }) => {
     const { user } = useContext(UserContext); // Obtener datos del usuario desde el contexto
@@ -32,7 +33,6 @@ const Home = ({ navigation }) => {
                 }
             }
         };
-        
         fetchTransacciones();
     }, [user?.rut]);
 
@@ -43,6 +43,16 @@ const Home = ({ navigation }) => {
                 <TouchableOpacity>
                     <Image source={icons.logout} style={styles.iconHeader} />
                 </TouchableOpacity>
+            </View>
+        );
+    }
+
+    // Renderizar el perfil del usuario
+    function renderUserProfile() {
+        return (
+            <View style={styles.userProfileContainer}>
+                <Image source={require('../assets/icons/user.png')} style={styles.profileImage} />
+                <Text style={styles.userName}>{user?.nombre} {user?.apellido}</Text>
             </View>
         );
     }
@@ -58,12 +68,33 @@ const Home = ({ navigation }) => {
                         style={styles.walletButton}
                         onPress={() => navigation.navigate("AgregarSaldo")}
                     >
-                        <Image
-                            source={icons.wallet}
-                            style={styles.walletIcon}
-                        />
+                        <Image source={icons.wallet} style={styles.walletIcon} />
                     </TouchableOpacity>
                 </View>
+            </View>
+        );
+    }
+
+    // Renderizar el recuadro de estado del usuario
+    function renderEstadoUsuario() {
+        let mensaje;
+        let tarifa;
+
+        if (user?.estado === "Pendiente") {
+            mensaje = `Actualmente tu tarifa es $600. Recuerda que debes enviar tus documentos al correo ejemplo@gmail.com para que tu tarifa sea la de ${user?.tipo_usuario}`;
+        } else if (user?.estado === "Aceptado") {
+            tarifa = {
+                Estudiante: 220,
+                Adulto: 600,
+                dulto_mayor: 350,
+            }[user?.tipo_usuario] || 0;
+
+            mensaje = `Tu tipo de usuario es ${user?.tipo_usuario} y tu tarifa es $${tarifa}`;
+        }
+
+        return (
+            <View style={styles.estadoUsuarioContainer}>
+                <Text style={styles.estadoUsuarioText}>{mensaje}</Text>
             </View>
         );
     }
@@ -72,31 +103,29 @@ const Home = ({ navigation }) => {
     function renderHistorialPublicidad() {
         return (
             <View style={styles.historialPublicidadContainer}>
-                {/* Historial */}
                 <View style={styles.historialContainer}>
                     <Text style={styles.historialText}>Últimas Transacciones</Text>
                     <ScrollView style={styles.historialList}>
-                            {ultimasTransacciones.map((item) => (
-                                <View key={item.id} style={styles.historialItem}>
-                                    <Text style={styles.historialItemText}>
-                                        <Text style={styles.boldText}>Fecha: </Text>
-                                        {new Date(item.fecha).toLocaleDateString()} -{" "}
-                                        <Text style={styles.boldText}>Hora: </Text>
-                                        {item.hora.split(".")[0]}
-                                    </Text>
-                                    <Text
-                                        style={[
-                                            styles.historialItemText,
-                                            { color: item.monto > 0 ? "green" : "red" },
-                                        ]}
-                                    >
-                                        <Text style={styles.boldText}>Monto: </Text>
-                                        {item.monto > 0 ? `+${item.monto}` : item.monto}
-                                    </Text>
-                                </View>
-                            ))}
-                        </ScrollView>
-                    {/* Botón para ver el historial completo */}
+                        {ultimasTransacciones.map((item) => (
+                            <View key={item.id} style={styles.historialItem}>
+                                <Text style={styles.historialItemText}>
+                                    <Text style={styles.boldText}>Fecha: </Text>
+                                    {new Date(item.fecha).toLocaleDateString()} -{" "}
+                                    <Text style={styles.boldText}>Hora: </Text>
+                                    {item.hora.split(".")[0]}
+                                </Text>
+                                <Text
+                                    style={[
+                                        styles.historialItemText,
+                                        { color: item.monto > 0 ? "green" : "red" },
+                                    ]}
+                                >
+                                    <Text style={styles.boldText}>Monto: </Text>
+                                    {item.monto > 0 ? `+${item.monto}` : item.monto}
+                                </Text>
+                            </View>
+                        ))}
+                    </ScrollView>
                     <TouchableOpacity
                         style={styles.verHistorialButton}
                         onPress={() => navigation.navigate("HistorialScreen")}
@@ -106,7 +135,6 @@ const Home = ({ navigation }) => {
                         </Text>
                     </TouchableOpacity>
                 </View>
-                {/* Publicidad */}
                 <View style={styles.publicidadContainer}>
                     <Image
                         source={images.promoBanner}
@@ -133,21 +161,24 @@ const Home = ({ navigation }) => {
     }
 
     return (
-        <SafeAreaView style={styles.container}>
-            {renderHeader()}
-            <View style={styles.contentContainer}>
-                {renderSaldo()}
-                {renderHistorialPublicidad()}
-            </View>
-            {renderMenu()}
-        </SafeAreaView>
+        <LinearGradient colors={['#34c1ee', '#ffffff']} style={styles.container}>
+            <SafeAreaView style={{ flex: 1 }}>
+                <View style={styles.contentContainer}>
+                    {renderUserProfile()}
+                    {renderSaldo()}
+                    {renderEstadoUsuario()} {/* Aquí se renderiza el recuadro de estado */}
+                    {renderHistorialPublicidad()}
+                </View>
+                {renderMenu()}
+            </SafeAreaView>
+        </LinearGradient>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#93C9FD",
+        paddingTop: 20,
     },
     headerContainer: {
         flexDirection: "row",
@@ -163,19 +194,41 @@ const styles = StyleSheet.create({
     contentContainer: {
         flex: 1,
         paddingHorizontal: 10,
+        alignItems: "flex-start", // Cambiado a alineación a la izquierda
+    },
+    userProfileContainer: {
+        flexDirection: "row",
         alignItems: "center",
+        marginBottom: 10,
+    },
+    profileImage: {
+        width: 30,
+        height: 30,
+        borderRadius: 20,
+        marginLeft: 7,
+        marginRight: 7, // Espacio entre la imagen y el nombre
+    },
+    userName: {
+        fontSize: 18,
+        fontWeight: "bold",
+        color: "#000",
     },
     saldoContainer: {
         width: "100%",
-        backgroundColor: "#D6EFFF",
+        backgroundColor: "#d1f3ff",
         padding: 10,
         borderRadius: 20,
         marginBottom: 20,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
     },
     saldoText: {
         fontSize: 22,
         color: "#000",
         textAlign: "center",
+        fontWeight: "bold"
     },
     saldoRow: {
         flexDirection: "row",
@@ -189,8 +242,8 @@ const styles = StyleSheet.create({
         color: "#000",
     },
     walletButton: {
-        width: 50,
-        height: 50,
+        width: 40,
+        height: 40,
         backgroundColor: "#FFFFFF",
         borderRadius: 25,
         alignItems: "center",
@@ -203,9 +256,25 @@ const styles = StyleSheet.create({
         elevation: 5,
     },
     walletIcon: {
-        width: 30,
-        height: 30,
+        width: 25,
+        height: 25,
         tintColor: "#000",
+    },
+    estadoUsuarioContainer: {
+        width: "100%",
+        backgroundColor: "#f0f8ff",
+        padding: 10,
+        borderRadius: 10,
+        marginBottom: 20,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+    },
+    estadoUsuarioText: {
+        fontSize: 16,
+        color: "#000",
+        textAlign: "center",
     },
     historialPublicidadContainer: {
         flexDirection: "row",
@@ -215,14 +284,18 @@ const styles = StyleSheet.create({
     },
     historialContainer: {
         width: "50%",
-        backgroundColor: "#C8E3FF",
+        backgroundColor: "#d1f3ff",
         borderRadius: 10,
         padding: 10,
         height: 350,
         marginRight: 10,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
     },
     historialText: {
-        fontSize: 22,
+        fontSize: 20,
         fontWeight: "bold",
         marginBottom: 10,
         textAlign: "center",
@@ -257,6 +330,10 @@ const styles = StyleSheet.create({
     publicidadContainer: {
         width: "45%",
         marginLeft: 10,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
     },
     publicidadImage: {
         width: "100%",

@@ -90,6 +90,7 @@ app.post('/register', async (req, res) => {
     }
 });
 
+//Backend para el historial
 
 // Endpoint para obtener el historial de transacciones
 // Endpoint para obtener el historial completo según el tipo de usuario
