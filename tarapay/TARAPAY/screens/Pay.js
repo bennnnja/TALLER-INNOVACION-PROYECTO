@@ -16,8 +16,9 @@ export default function PayScreen({ navigation }) {
         const response = await axios.post("http://192.168.1.176:50587/historial", {
           rutPasajero: user?.rut,
         });
-        if (response.data.historial.length > 0) {
-          const lastTransaction = response.data.historial[0]; // Obtén la última transacción
+    
+        if (response.data.historial?.length > 0) {
+          const lastTransaction = response.data.historial[0]; // Obtener la última transacción
           setTransactionDetails(lastTransaction);
         } else {
           setError("No hay transacciones disponibles.");
@@ -29,6 +30,7 @@ export default function PayScreen({ navigation }) {
         setLoading(false);
       }
     };
+    
     fetchLastTransaction();
   }, [user]);
 
