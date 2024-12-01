@@ -1,13 +1,30 @@
 import React from "react";
-import { Image, StyleSheet } from "react-native";
+import { View, Image, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
-import Home from "../screens/Home"; // Asegúrate de que esta ruta sea correcta
+import Home from "../screens/Home";
 import Scan from "../screens/Scan";
 import Profile from "../screens/Profile";
-import { COLORS, icons } from "../constants"; // Asegúrate de tener un archivo constants.js con estos valores
+import { COLORS, icons } from "../constants";
 
 const Tab = createBottomTabNavigator();
+
+const CustomScanButton = ({ onPress }) => (
+  <View style={styles.scanButtonWrapper}>
+    <TouchableOpacity
+      style={styles.scanButton}
+      onPress={onPress}
+      activeOpacity={0.8}
+    >
+      <Image
+        source={icons.scan}
+        resizeMode="contain"
+        style={styles.scanIcon}
+      />
+    </TouchableOpacity>
+    <Text style={styles.scanLabel}>Pagar</Text>
+  </View>
+);
 
 const Tabs = () => {
   return (
@@ -15,23 +32,7 @@ const Tabs = () => {
       screenOptions={{
         headerShown: false,
         tabBarShowLabel: false,
-        tabBarStyle: {
-          position: "absolute",
-          bottom: 10, // Subir la barra ligeramente
-          left: 10,
-          right: 10,
-          height: 70, // Altura de la barra
-          backgroundColor: COLORS.white,
-          borderRadius: 15, // Redondear las esquinas
-          shadowColor: "#000",
-          shadowOffset: {
-            width: 0,
-            height: 4,
-          },
-          shadowOpacity: 0.25,
-          shadowRadius: 4,
-          elevation: 5,
-        },
+        tabBarStyle: styles.tabBarStyle,
       }}
     >
       <Tab.Screen
@@ -39,7 +40,8 @@ const Tabs = () => {
         component={Home}
         options={{
           tabBarIcon: ({ focused }) => (
-            <Image
+            <View style={styles.iconContainer}>
+              <Image
               source={icons.more} // Cambia este ícono si es necesario
               resizeMode="contain"
               style={{
@@ -48,6 +50,15 @@ const Tabs = () => {
                 tintColor: focused ? COLORS.primary : COLORS.secondary,
               }}
             />
+              <Text
+                style={[
+                  styles.label,
+                  { color: focused ? COLORS.primary : COLORS.secondary },
+                ]}
+              >
+                Inicio
+              </Text>
+            </View>
           ),
         }}
       />
@@ -55,17 +66,7 @@ const Tabs = () => {
         name="Scan"
         component={Scan}
         options={{
-          tabBarIcon: ({ focused }) => (
-            <Image
-              source={icons.scan} // Cambia este ícono si es necesario
-              resizeMode="contain"
-              style={{
-                width: 25,
-                height: 25,
-                tintColor: focused ? COLORS.primary : COLORS.secondary,
-              }}
-            />
-          ),
+          tabBarButton: (props) => <CustomScanButton {...props} />,
         }}
       />
       <Tab.Screen
@@ -73,20 +74,97 @@ const Tabs = () => {
         component={Profile}
         options={{
           tabBarIcon: ({ focused }) => (
-            <Image
-              source={icons.user} // Cambia este ícono si es necesario
-              resizeMode="contain"
-              style={{
-                width: 25,
-                height: 25,
-                tintColor: focused ? COLORS.primary : COLORS.secondary,
-              }}
-            />
+            <View style={styles.iconContainer}>
+              <Image
+                source={icons.user}
+                resizeMode="contain"
+                style={[
+                  styles.tabIcon,
+                  { tintColor: focused ? COLORS.primary : COLORS.secondary },
+                ]}
+              />
+              <Text
+                style={[
+                  styles.label,
+                  { color: focused ? COLORS.primary : COLORS.secondary },
+                ]}
+              >
+                Perfil
+              </Text>
+            </View>
           ),
         }}
       />
     </Tab.Navigator>
   );
 };
+
+const styles = StyleSheet.create({
+  tabBarStyle: {
+    position: "absolute",
+    bottom: 10,
+    left: 10,
+    right: 10,
+    height: 80, // Incrementa un poco la altura del rectángulo blanco
+    backgroundColor: COLORS.white,
+    borderRadius: 15,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+    justifyContent: "center", // Centra verticalmente los botones
+  },
+  iconContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 26, // Baja los íconos más abajo dentro del rectángulo blanco
+  },
+  tabIcon: {
+    width: 25,
+    height: 25,
+  },
+  label: {
+    fontSize: 12,
+    marginTop: 2,
+  },
+  scanButtonWrapper: {
+    alignItems: "center",
+    justifyContent: "center",
+    position: "absolute",
+    top: -35, // Ajusta la posición del botón para mantenerlo más alto
+    alignSelf: "center",
+  },
+  scanButton: {
+    width: 70, // Botón ligeramente más grande
+    height: 70,
+    backgroundColor: COLORS.primary,
+    borderRadius: 35,
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  scanIcon: {
+    width: 35, // Ícono también ligeramente más grande
+    height: 35,
+    tintColor: COLORS.white,
+  },
+  scanLabel: {
+    marginTop: 8, // Espacio entre el círculo y la palabra
+    fontSize: 12,
+    color: COLORS.primary,
+    fontWeight: "bold",
+  },
+});
 
 export default Tabs;
