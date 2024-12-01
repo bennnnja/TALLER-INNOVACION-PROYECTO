@@ -22,7 +22,7 @@ const Home = ({ navigation }) => {
         const fetchTransacciones = async () => {
             if (user?.rut) {
                 try {
-                    const response = await axios.post("http://192.168.1.88:50587/historial", {
+                    const response = await axios.post("http://192.168.1.176:50587/historial", {
                         rut: user.rut,
                         tipoUsuario: user.tipo_usuario, // Considerar el tipo de usuario
                     });
@@ -136,12 +136,24 @@ const Home = ({ navigation }) => {
                     </TouchableOpacity>
                 </View>
                 <View style={styles.publicidadContainer}>
-                    <Image
-                        source={images.promoBanner}
-                        style={styles.publicidadImage}
-                        resizeMode="cover"
-                    />
-                </View>
+    <Image
+        source={require('../assets/nike.gif')} // Ruta al archivo GIF
+        style={styles.publicidadImage}
+        resizeMode="cover"
+    />
+</View>
+
+            </View>
+        );
+    }
+    function renderUserProfile() {
+        return (
+            <View style={styles.userProfileContainer}>
+                <Image source={require('../assets/icons/user.png')} style={styles.profileImage} />
+                <Text style={styles.userName}>{user?.nombre} {user?.apellido}</Text>
+    
+                {/* Agregar el logo en la parte superior derecha */}
+                <Image source={require('../assets/tarapay-logo.jpeg')} style={styles.logo} />
             </View>
         );
     }
@@ -328,13 +340,25 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
     },
     publicidadContainer: {
-        width: "45%",
-        marginLeft: 10,
-        shadowColor: "#000",
+        width: "50%",
+        height: 400, // Define una altura para que el GIF no se expanda demasiado
+        justifyContent: "center", // Centra el GIF verticalmente
+        alignItems: "center", // Centra el GIF horizontalmente
+        marginTop: 1, // Añade un pequeño espacio encima
+        borderRadius: 10, // Bordes redondeados para el contenedor
+        overflow: 'hidden', // Asegura que el contenido no sobresalga
+        shadowColor: "#000", // Sombra para darle un efecto de profundidad
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.25,
         shadowRadius: 4,
+        elevation: 5, // Sombra en Android
     },
+    publicidadImage: {
+        width: '100%', // Hace que el GIF ocupe el ancho completo del contenedor
+        height: '100%', // Ajusta la altura para que el GIF no distorsione
+        borderRadius: 10, // Redondea los bordes del GIF
+    },
+    
     publicidadImage: {
         width: "100%",
         height: 500,
@@ -352,6 +376,33 @@ const styles = StyleSheet.create({
         width: 25,
         height: 25,
         tintColor: "#FFFFFF",
+    },
+    
+    userProfileContainer: {
+        flexDirection: "row",
+        alignItems: "center",
+        marginBottom: 10,
+        position: 'relative', // Permite posicionar el logo
+    },
+    profileImage: {
+        width: 30,
+        height: 30,
+        borderRadius: 20,
+        marginLeft: 7,
+        marginRight: 7, // Espacio entre la imagen y el nombre
+    },
+    userName: {
+        fontSize: 18,
+        fontWeight: "bold",
+        color: "#000",
+    },
+    logo: {
+        position: 'absolute', // Permite posicionar el logo
+        top: -15, // Lo coloca en la parte superior
+        right: -250, // Lo coloca al extremo derecho
+        width: 50, // Ajusta el tamaño del logo
+        height: 50,
+        borderRadius: 25, // Redondea el logo si es necesario
     },
 });
 

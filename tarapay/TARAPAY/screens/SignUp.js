@@ -6,6 +6,7 @@ import {
     TouchableOpacity,
     Alert,
     StyleSheet,
+    Image,
 } from "react-native";
 import { UserContext } from '../UserContext'; // Ruta corregida
 
@@ -16,7 +17,7 @@ const SignUp = ({ navigation }) => {
 
     const handleLogin = async () => {
         try {
-            const response = await fetch('http://192.168.1.88:50587/login', {
+            const response = await fetch('http://192.168.1.176:50587/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -33,7 +34,6 @@ const SignUp = ({ navigation }) => {
 
             console.log('Respuesta JSON desde el servidor:', data);
 
-    
             if (!data.user) {
                 throw new Error('Datos del usuario no encontrados');
             }
@@ -49,7 +49,6 @@ const SignUp = ({ navigation }) => {
                 estado: data.user.estado || '',
                 saldo: data.user.saldo || 0,
             });
-            
     
             Alert.alert('Éxito', data.message);
             navigation.navigate('HomeTabs');
@@ -57,7 +56,7 @@ const SignUp = ({ navigation }) => {
             Alert.alert('Error', error.message || 'No se pudo conectar con el servidor');
         }
     };
-    
+
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Iniciar Sesión</Text>
@@ -85,6 +84,12 @@ const SignUp = ({ navigation }) => {
             >
                 <Text style={styles.registerButtonText}>¿No tienes cuenta? Regístrate</Text>
             </TouchableOpacity>
+
+            {/* Imagen del logo en la parte inferior */}
+            <Image
+                source={require('../assets/tarapay-logo.jpeg')} // Ruta a tu logo
+                style={styles.logo}
+            />
         </View>
     );
 };
@@ -131,6 +136,12 @@ const styles = StyleSheet.create({
     registerButtonText: {
         color: '#007BFF',
         fontSize: 16,
+    },
+    logo: {
+        marginTop: 30, // Espacio entre el botón y la imagen
+        width: 120,  // Tamaño de la imagen
+        height: 120, // Tamaño de la imagen
+        resizeMode: 'contain', // Ajusta la imagen al contenedor
     },
 });
 

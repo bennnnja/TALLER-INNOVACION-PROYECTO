@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react';
 import { SafeAreaView, View, Text, StyleSheet, Image, TouchableOpacity, Alert, ScrollView } from 'react-native';
 import { UserContext } from '../UserContext';
-import { Defs, LinearGradient,RadialGradient, Stop } from 'react-native-svg';
+import { Defs, LinearGradient, RadialGradient, Stop } from 'react-native-svg';
 import QRCode from 'react-native-qrcode-svg';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
@@ -60,11 +60,17 @@ const Profile = ({ navigation }) => {
     }
 
     return (
-        
         <SafeAreaView style={styles.container}>
             <ScrollView contentContainerStyle={[styles.scrollContainer, { paddingBottom: 100 }]}>
                 <View style={styles.profileHeader}>
                     <Image source={require('../assets/icons/user.png')} style={styles.photo} />
+                    {/* Logo superpuesto en la foto de perfil */}
+                    <View style={styles.logoContainer}>
+                        <Image 
+                            source={require('../assets/icons/tarapay-logo.jpeg')} 
+                            style={styles.logo}
+                        />
+                    </View>
                 </View>
                 <View style={styles.infoContainer}>
                     <Text style={styles.infoText}>Nombre: <Text style={styles.infoHighlight}>{user.nombre || 'No disponible'}</Text></Text>
@@ -103,6 +109,17 @@ const Profile = ({ navigation }) => {
                 <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
                     <Text style={styles.logoutText}>Cerrar Sesión</Text>
                 </TouchableOpacity>
+
+                {/* Banner de publicidad con texto y GIF */}
+                <View style={styles.adBanner}>
+                    <Image
+                        source={{ uri: 'https://media.giphy.com/media/3o6Zt7I9tbI58M9Rfy/giphy.gif' }} // URL del GIF
+                        style={styles.adImage}
+                    />
+                    <View style={styles.adTextContainer}>
+                        <Text style={styles.adText}>¡Promoción Especial! Obtén un descuento en tu próximo viaje con nosotros.</Text>
+                    </View>
+                </View>
             </ScrollView>
         </SafeAreaView>
     );
@@ -121,12 +138,39 @@ const styles = StyleSheet.create({
     profileHeader: {
         alignItems: 'center',
         marginBottom: 20,
+        position: 'relative', // Permite posicionar el logo encima de la foto de perfil
     },
     photo: {
         width: 120,
         height: 120,
         borderRadius: 60,
         backgroundColor: '#FFF',
+    },
+    userProfileContainer: {
+        flexDirection: "row",
+        alignItems: "center",
+        marginBottom: 10,
+        position: 'relative', // Permite posicionar el logo
+    },
+    profileImage: {
+        width: 30,
+        height: 30,
+        borderRadius: 20,
+        marginLeft: 7,
+        marginRight: 7, // Espacio entre la imagen y el nombre
+    },
+    userName: {
+        fontSize: 18,
+        fontWeight: "bold",
+        color: "#000",
+    },
+    logo: {
+        position: 'absolute', // Permite posicionar el logo
+        top: -140, // Lo coloca en la parte superior
+        right: -190, // Lo coloca al extremo derecho
+        width: 50, // Ajusta el tamaño del logo
+        height: 50,
+        borderRadius: 25, // Redondea el logo si es necesario
     },
     infoContainer: {
         backgroundColor: '#FFFFFF',
@@ -167,6 +211,35 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: '#003366',
     },
+
+    // Estilos del banner
+    adBanner: {
+        width: '90%',
+        height: 150,
+        marginTop: 10,
+        backgroundColor: '#f8f8f8',
+        borderTopWidth: 1,
+        borderColor: '#ddd',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 10,
+        position: 'absolute', 
+        bottom: 170,  // Ponerlo encima del área de cerrar sesión
+    },
+    adTextContainer: {
+        position: 'absolute',
+        bottom: 10,
+    },
+    adText: {
+        fontSize: 14,
+        textAlign: 'center',
+        fontWeight: 'bold',
+    },
+    adImage: {
+        width: 100,
+        height: 100,
+        resizeMode: 'contain',
+    }
 });
 
 export default Profile;
