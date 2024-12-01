@@ -10,7 +10,7 @@ export default function PayScreen({ route, navigation }) {
     setLoading(true);
     try {
       // Utilizamos el RUT del pasajero que viene desde los parámetros
-      const response = await axios.post("http://192.168.1.85:50587/transaction", {
+      const response = await axios.post("http://192.168.1.88:50587/transaction", {
         choferRut,
         pasajeroRut, // Aquí usamos el RUT del pasajero real
       });

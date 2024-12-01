@@ -11,25 +11,28 @@ import {
 import { UserContext } from "../UserContext";
 
 const HistorialScreen = ({ navigation }) => {
-    const { user } = useContext(UserContext); // Obtén el usuario actual del contexto
-    const [historialData, setHistorialData] = useState([]); // Estado para almacenar el historial
-    const [loading, setLoading] = useState(true); // Estado para manejar el indicador de carga
+    const { user } = useContext(UserContext);
+    const [historialData, setHistorialData] = useState([]);
+    const [loading, setLoading] = useState(true);
 
-    // Función para cargar el historial desde el servidor
     const fetchHistorial = async () => {
+        console.log("Iniciando fetchHistorial...");
         try {
             const response = await fetch("http://192.168.1.85:50587/historial", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ rutPasajero: user?.rut }), // Envía el rut del usuario logueado
+                body: JSON.stringify({
+                    rut: user?.rut,
+                    tipoUsuario: user?.tipo_usuario, // Enviar también el tipo de usuario
+                }),
             });
-
+    
             if (!response.ok) {
                 throw new Error(`Error: ${response.status} - ${response.statusText}`);
             }
-
+    
             const data = await response.json();
-            setHistorialData(data.historial); // Actualiza el estado con los datos del historial
+            setHistorialData(data.historial);
         } catch (error) {
             console.error("Error al cargar el historial:", error.message);
             Alert.alert("Error", "No se pudo cargar el historial");
@@ -37,8 +40,8 @@ const HistorialScreen = ({ navigation }) => {
             setLoading(false); // Detiene el indicador de carga
         }
     };
-
-    // Cargar el historial al montar el componente
+    
+    
     useEffect(() => {
         fetchHistorial();
     }, []);
@@ -60,20 +63,20 @@ const HistorialScreen = ({ navigation }) => {
                             </Text>
                             <Text style={styles.itemText}>
                                 <Text style={styles.boldText}>Fecha: </Text>
-                                {new Date(item.fecha).toLocaleDateString()} {/* Formatea la fecha */}
+                                {new Date(item.fecha).toLocaleDateString()}
                             </Text>
                             <Text style={styles.itemText}>
                                 <Text style={styles.boldText}>Hora: </Text>
-                                {item.hora.split(".")[0]} {/* Muestra solo la hora */}
+                                {item.hora.split(".")[0]}
                             </Text>
                             <Text
                                 style={[
                                     styles.itemText,
-                                    { color: item.monto > 0 ? "green" : "red" },
+                                    { color: item.color }, // Usar el color definido por el servidor
                                 ]}
                             >
                                 <Text style={styles.boldText}>Monto: </Text>
-                                {item.monto > 0 ? `+${item.monto}` : item.monto}
+                                {item.monto}
                             </Text>
                             <Text style={styles.itemText}>
                                 <Text style={styles.boldText}>RUT Chofer: </Text>
@@ -120,7 +123,6 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     historialItem: {
-        backgroundColor: "#FFFFFF",
         borderRadius: 10,
         padding: 15,
         marginBottom: 15,

@@ -91,30 +91,59 @@ app.post('/register', async (req, res) => {
 });
 
 
-app.post("/historial", async (req, res) => {
-    const { rutPasajero } = req.body;
-    console.log("Solicitud recibida para /historial con rutPasajero:", rutPasajero);
+// Endpoint para obtener el historial de transacciones
+// Endpoint para obtener el historial completo según el tipo de usuario
+// Endpoint para obtener el historial completo según el tipo de usuario
+app.post('/historial', async (req, res) => {
+    const { rut, tipoUsuario } = req.body;
+
+    console.log(`Solicitud para /historial con rut: ${rut}, tipoUsuario: ${tipoUsuario}`);
 
     try {
-        const result = await pool.query(`
-            SELECT id_transaccion AS id, fecha, hora, monto, rut_chofer
-            FROM transaccion
-            WHERE usuario_rut = $1
-            ORDER BY fecha DESC, hora DESC
-        `, [rutPasajero]);
+        let result;
 
-        if (result.rows.length === 0) {
-            console.log("No se encontraron transacciones para el usuario:", rutPasajero);
+        if (tipoUsuario.toLowerCase() === 'chofer') {
+            // Obtener transacciones como chofer
+            const choferResult = await pool.query(`
+                SELECT id_transaccion AS id, fecha, hora, monto, usuario_rut AS rut_pasajero
+                FROM transaccion
+                WHERE rut_chofer = $1
+                ORDER BY fecha DESC, hora DESC
+            `, [rut]);
+
+            const pasajeroResult = await pool.query(`
+                SELECT id_transaccion AS id, fecha, hora, monto, rut_chofer
+                FROM transaccion
+                WHERE usuario_rut = $1
+                ORDER BY fecha DESC, hora DESC
+            `, [rut]);
+
+            result = [...pasajeroResult.rows, ...choferResult.rows];
+        } else {
+            // Obtener transacciones solo como pasajero
+            const pasajeroResult = await pool.query(`
+                SELECT id_transaccion AS id, fecha, hora, monto, rut_chofer
+                FROM transaccion
+                WHERE usuario_rut = $1
+                ORDER BY fecha DESC, hora DESC
+            `, [rut]);
+
+            result = pasajeroResult.rows;
+        }
+
+        if (result.length === 0) {
+            console.log(`No se encontraron transacciones para el rut: ${rut}`);
             return res.status(404).json({ message: "No se encontraron transacciones para este usuario" });
         }
 
-        console.log("Transacciones encontradas:", result.rows);
-        res.status(200).json({ historial: result.rows });
+        console.log("Transacciones encontradas:", result);
+        res.status(200).json({ historial: result });
     } catch (error) {
-        console.error("Error al obtener el historial:", error);
+        console.error("Error al obtener el historial:", error.message);
         res.status(500).json({ message: "Error interno del servidor" });
     }
 });
+
 
 
 

@@ -21,16 +21,18 @@ const Home = ({ navigation }) => {
         const fetchTransacciones = async () => {
             if (user?.rut) {
                 try {
-                    const response = await axios.post("http://192.168.1.85:50587/historial", {
-                        rutPasajero: user.rut,
+                    const response = await axios.post("http://192.168.1.88:50587/historial", {
+                        rut: user.rut,
+                        tipoUsuario: user.tipo_usuario, // Considerar el tipo de usuario
                     });
+        
                     setUltimasTransacciones(response.data.historial.slice(0, 6)); // Obtener las últimas 6 transacciones
                 } catch (error) {
                     console.error("Error al cargar las transacciones:", error);
                 }
             }
         };
-
+        
         fetchTransacciones();
     }, [user?.rut]);
 
