@@ -52,10 +52,12 @@ const Home = ({ navigation }) => {
         return (
             <View style={styles.userProfileContainer}>
                 <Image source={require('../assets/icons/user.png')} style={styles.profileImage} />
-                <Text style={styles.userName}>{user?.nombre} {user?.apellido}</Text>
+                <Text style={styles.userName}>
+                    {user?.nombre || "Usuario"} {user?.apellido || ""}
+                </Text>
             </View>
         );
-    }
+    }    
 
     // Renderizar saldo con el botón de billetera
     function renderSaldo() {
@@ -63,7 +65,7 @@ const Home = ({ navigation }) => {
             <View style={styles.saldoContainer}>
                 <Text style={styles.saldoText}>SALDO</Text>
                 <View style={styles.saldoRow}>
-                    <Text style={styles.saldoAmount}>${user?.saldo || 0}</Text>
+                    <Text style={styles.saldoAmount}>${user?.saldo ?? 0}</Text>
                     <TouchableOpacity
                         style={styles.walletButton}
                         onPress={() => navigation.navigate("AgregarSaldo")}
@@ -74,30 +76,32 @@ const Home = ({ navigation }) => {
             </View>
         );
     }
+    
 
     // Renderizar el recuadro de estado del usuario
     function renderEstadoUsuario() {
-        let mensaje;
-        let tarifa;
-
+        let mensaje = "Sin información del estado.";
+        let tarifa = 0;
+    
         if (user?.estado === "Pendiente") {
-            mensaje = `Actualmente tu tarifa es $600. Recuerda que debes enviar tus documentos al correo ejemplo@gmail.com para que tu tarifa sea la de ${user?.tipo_usuario}`;
+            mensaje = `Actualmente tu tarifa es $600. Recuerda que debes enviar tus documentos al correo ejemplo@gmail.com para que tu tarifa sea la de ${user?.tipo_usuario || "N/A"}`;
         } else if (user?.estado === "Aceptado") {
             tarifa = {
                 Estudiante: 220,
                 Adulto: 600,
-                dulto_mayor: 350,
+                Adulto_mayor: 350,
             }[user?.tipo_usuario] || 0;
-
-            mensaje = `Tu tipo de usuario es ${user?.tipo_usuario} y tu tarifa es $${tarifa}`;
+    
+            mensaje = `Tu tipo de usuario es ${user?.tipo_usuario || "Desconocido"} y tu tarifa es $${tarifa}`;
         }
-
+    
         return (
             <View style={styles.estadoUsuarioContainer}>
                 <Text style={styles.estadoUsuarioText}>{mensaje}</Text>
             </View>
         );
     }
+    
 
     // Renderizar historial con estilo mejorado
     function renderHistorialPublicidad() {
@@ -110,9 +114,9 @@ const Home = ({ navigation }) => {
                             <View key={item.id} style={styles.historialItem}>
                                 <Text style={styles.historialItemText}>
                                     <Text style={styles.boldText}>Fecha: </Text>
-                                    {new Date(item.fecha).toLocaleDateString()} -{" "}
+                                    {item.fecha ? new Date(item.fecha).toLocaleDateString() : "N/A"} -{" "}
                                     <Text style={styles.boldText}>Hora: </Text>
-                                    {item.hora.split(".")[0]}
+                                    {item.hora ? item.hora.split(".")[0] : "N/A"}
                                 </Text>
                                 <Text
                                     style={[
@@ -121,7 +125,7 @@ const Home = ({ navigation }) => {
                                     ]}
                                 >
                                     <Text style={styles.boldText}>Monto: </Text>
-                                    {item.monto > 0 ? `${item.monto}` : item.monto}
+                                    {item.monto != null ? `${item.monto}` : "N/A"}
                                 </Text>
                             </View>
                         ))}
@@ -145,6 +149,7 @@ const Home = ({ navigation }) => {
             </View>
         );
     }
+    
 
     // Renderizar el menú inferior
     function renderMenu() {
