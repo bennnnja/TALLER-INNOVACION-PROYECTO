@@ -1,7 +1,8 @@
 import React, { useEffect, useState, useContext } from "react";
-import { View, Text, Image, StyleSheet, ActivityIndicator, Alert, Animated,TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, ActivityIndicator, Alert, Animated,TouchableOpacity } from "react-native";
 import { UserContext } from "../UserContext"; // Asegúrate de que UserContext esté definido
 import axios from "axios";
+import { Image } from 'expo-image';
 
 export default function PayScreen({ navigation }) {
   const { user } = useContext(UserContext); // Obtén el usuario actual del contexto
@@ -85,9 +86,8 @@ export default function PayScreen({ navigation }) {
       </Animated.View>
       <TouchableOpacity
                 style={styles.button}
-                onPress={() => navigation.goBack()}
-            >
-                <Text style={styles.buttonText}>Volver</Text>
+                onPress={() => navigation.goBack()}>
+                <Text style={styles.buttonText}>Volver al inicio</Text>
             </TouchableOpacity>
     </View>
   );

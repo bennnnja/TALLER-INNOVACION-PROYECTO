@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react';
 import { SafeAreaView, View, Text, StyleSheet, Image, TouchableOpacity, Alert, ScrollView } from 'react-native';
 import { UserContext } from '../UserContext';
-import { Defs, RadialGradient, Stop } from 'react-native-svg';
+import { Defs,  RadialGradient, Stop } from 'react-native-svg';
 import QRCode from 'react-native-qrcode-svg';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
@@ -67,6 +67,13 @@ const Profile = ({ navigation }) => {
                 <View style={styles.profileHeader}>
                     <View style={styles.profileBackground}></View>
                     <Image source={require('../assets/icons/user.png')} style={styles.photo} />
+                    {/* Logo superpuesto en la foto de perfil */}
+                    <View style={styles.logoContainer}>
+                        <Image 
+                            source={require('../assets/icons/tarapay-logo.jpeg')} 
+                            style={styles.logo}
+                        />
+                    </View>
                 </View>
 
                 {/* Información del usuario */}
@@ -131,6 +138,7 @@ const Profile = ({ navigation }) => {
             </ScrollView>
         </LinearGradient>
     );
+    
 };
 
 const styles = StyleSheet.create({
@@ -156,6 +164,7 @@ const styles = StyleSheet.create({
         bottom: 0,
         borderBottomLeftRadius: 20,
         borderBottomRightRadius: 20,
+        position: 'relative', // Permite posicionar el logo encima de la foto de perfil
     },
     photo: {
         width: 150,
@@ -168,6 +177,58 @@ const styles = StyleSheet.create({
         top: 70,
         left: '47%',
         transform: [{ translateX: -60 }],
+    },
+    userProfileContainer: {
+        flexDirection: "row",
+        alignItems: "center",
+        marginBottom: 10,
+        position: 'relative', // Permite posicionar el logo
+    },
+    profileImage: {
+        width: 30,
+        height: 30,
+        borderRadius: 20,
+        marginLeft: 7,
+        marginRight: 7, // Espacio entre la imagen y el nombre
+    },
+    userName: {
+        fontSize: 18,
+        fontWeight: "bold",
+        color: "#000",
+    },
+    logo: {
+        position: 'absolute', // Permite posicionar el logo
+        top: -140, // Lo coloca en la parte superior
+        right: -190, // Lo coloca al extremo derecho
+        width: 50, // Ajusta el tamaño del logo
+        height: 50,
+        borderRadius: 25, // Redondea el logo si es necesario
+    },
+    userProfileContainer: {
+        flexDirection: "row",
+        alignItems: "center",
+        marginBottom: 10,
+        position: 'relative', // Permite posicionar el logo
+    },
+    profileImage: {
+        width: 30,
+        height: 30,
+        borderRadius: 20,
+        marginLeft: 7,
+        marginRight: 7, // Espacio entre la imagen y el nombre
+    },
+    userName: {
+        fontSize: 18,
+        fontWeight: "bold",
+        color: "#000",
+    },
+    logo: {
+        position: 'absolute', // Permite posicionar el logo
+        top: -140, // Lo coloca en la parte superior
+        right: -190, // Lo coloca al extremo derecho
+        width: 50, // Ajusta el tamaño del logo
+        height: 50,
+        borderRadius: 25, // Redondea el logo si es necesario
     },
     infoContainer: {
         width: '90%',
@@ -223,3 +284,4 @@ const styles = StyleSheet.create({
 });
 
 export default Profile;
+
