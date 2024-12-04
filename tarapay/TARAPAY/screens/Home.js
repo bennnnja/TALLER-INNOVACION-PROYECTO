@@ -22,7 +22,7 @@ const Home = ({ navigation }) => {
         const fetchTransacciones = async () => {
             if (user?.rut) {
                 try {
-                    const response = await axios.post("http://192.168.1.176:50587/historial", {
+                    const response = await axios.post("http://192.168.1.109:50587/historial", {
                         rut: user.rut,
                         tipoUsuario: user.tipo_usuario, // Considerar el tipo de usuario
                     });
