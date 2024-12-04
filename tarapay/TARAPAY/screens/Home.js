@@ -22,7 +22,7 @@ const Home = ({ navigation }) => {
         const fetchTransacciones = async () => {
             if (user?.rut) {
                 try {
-                    const response = await axios.post("http://192.168.1.88:50587/historial", {
+                    const response = await axios.post("http://192.168.1.89:50587/historial", {
                         rut: user.rut,
                         tipoUsuario: user.tipo_usuario, // Considerar el tipo de usuario
                     });
@@ -321,7 +321,7 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
     },
     verHistorialButton: {
-        backgroundColor: "#1E90FF",
+        backgroundColor: "#34c1ee",
         padding: 10,
         borderRadius: 8,
         alignItems: "center",

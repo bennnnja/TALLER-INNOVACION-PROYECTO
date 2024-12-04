@@ -5,6 +5,8 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Home from "../screens/Home";
 import Scan from "../screens/Scan";
 import Profile from "../screens/Profile";
+import AgregarSaldo from "../screens/AgregarSaldo"; // Asegúrate de importar AgregarSaldo
+import HistorialScreen from "../screens/HistorialScreen"; // Importa HistorialScreen
 import { COLORS, icons } from "../constants";
 
 const Tab = createBottomTabNavigator();
@@ -16,11 +18,7 @@ const CustomScanButton = ({ onPress }) => (
       onPress={onPress}
       activeOpacity={0.8}
     >
-      <Image
-        source={icons.scan}
-        resizeMode="contain"
-        style={styles.scanIcon}
-      />
+      <Image source={icons.scan} resizeMode="contain" style={styles.scanIcon} />
     </TouchableOpacity>
     <Text style={styles.scanLabel}>Pagar</Text>
   </View>
@@ -42,21 +40,42 @@ const Tabs = () => {
           tabBarIcon: ({ focused }) => (
             <View style={styles.iconContainer}>
               <Image
-              source={icons.more} // Cambia este ícono si es necesario
-              resizeMode="contain"
-              style={{
-                width: 25,
-                height: 25,
-                tintColor: focused ? COLORS.primary : COLORS.secondary,
-              }}
-            />
+                source={icons.more}
+                resizeMode="contain"
+                style={{
+                  width: 25,
+                  height: 25,
+                  tintColor: focused ? COLORS.primary : COLORS.secondary,
+                }}
+              />
               <Text
-                style={[
-                  styles.label,
-                  { color: focused ? COLORS.primary : COLORS.secondary },
-                ]}
+                style={[styles.label, { color: focused ? COLORS.primary : COLORS.secondary }]}
               >
                 Inicio
+              </Text>
+            </View>
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="AgregarSaldo"
+        component={AgregarSaldo}
+        options={{
+          tabBarIcon: ({ focused }) => (
+            <View style={styles.iconContainer}>
+              <Image
+                source={icons.wallet} // Icono de Agregar Saldo
+                resizeMode="contain"
+                style={{
+                  width: 25,
+                  height: 25,
+                  tintColor: focused ? COLORS.primary : COLORS.secondary,
+                }}
+              />
+              <Text
+                style={[styles.label, { color: focused ? COLORS.primary : COLORS.secondary }]}
+              >
+                Saldo
               </Text>
             </View>
           ),
@@ -69,6 +88,36 @@ const Tabs = () => {
           tabBarButton: (props) => <CustomScanButton {...props} />,
         }}
       />
+<Tab.Screen
+  name="Historial"
+  component={HistorialScreen}
+  options={{
+    tabBarIcon: ({ focused }) => (
+      <View style={styles.iconContainer}>
+        <Image
+          source={icons.history} // Asegúrate de tener un ícono para historial
+          resizeMode="contain"
+          style={{
+            width: 25,
+            height: 25,
+            tintColor: focused ? COLORS.primary : COLORS.secondary,
+          }}
+        />
+      </View>
+    ),
+    tabBarLabel: ({ focused }) => (
+      <Text
+        style={[
+          styles.label,
+          { color: focused ? COLORS.primary : COLORS.secondary, textAlign: 'center' },
+        ]}
+      >
+        Historial
+      </Text>
+    ),
+  }}
+/>
+
       <Tab.Screen
         name="Profile"
         component={Profile}
@@ -84,10 +133,7 @@ const Tabs = () => {
                 ]}
               />
               <Text
-                style={[
-                  styles.label,
-                  { color: focused ? COLORS.primary : COLORS.secondary },
-                ]}
+                style={[styles.label, { color: focused ? COLORS.primary : COLORS.secondary }]}
               >
                 Perfil
               </Text>
@@ -95,6 +141,7 @@ const Tabs = () => {
           ),
         }}
       />
+      {/* Agregamos el nuevo Tab para Historial */}
     </Tab.Navigator>
   );
 };
@@ -105,23 +152,20 @@ const styles = StyleSheet.create({
     bottom: 10,
     left: 10,
     right: 10,
-    height: 80, // Incrementa un poco la altura del rectángulo blanco
+    height: 80,
     backgroundColor: COLORS.white,
     borderRadius: 15,
     shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
-    justifyContent: "center", // Centra verticalmente los botones
+    justifyContent: "center",
   },
   iconContainer: {
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 26, // Baja los íconos más abajo dentro del rectángulo blanco
+    marginTop: 26,
   },
   tabIcon: {
     width: 25,
@@ -135,35 +179,31 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     position: "absolute",
-    top: -35, // Ajusta la posición del botón para mantenerlo más alto
+    top: -35,
     alignSelf: "center",
   },
   scanButton: {
-    width: 70, // Botón ligeramente más grande
+    width: 70,
     height: 70,
     backgroundColor: COLORS.primary,
     borderRadius: 35,
     alignItems: "center",
     justifyContent: "center",
     shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
   },
   scanIcon: {
-    width: 35, // Ícono también ligeramente más grande
+    width: 35,
     height: 35,
     tintColor: COLORS.white,
   },
   scanLabel: {
-    marginTop: 8, // Espacio entre el círculo y la palabra
-    fontSize: 12,
+    marginTop: 8,
+    fontSize: 10,
     color: COLORS.primary,
-    fontWeight: "bold",
   },
 });
 

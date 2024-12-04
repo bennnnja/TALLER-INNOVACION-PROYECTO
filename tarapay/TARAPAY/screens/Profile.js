@@ -1,10 +1,11 @@
 import React, { useContext, useState } from 'react';
 import { SafeAreaView, View, Text, StyleSheet, Image, TouchableOpacity, Alert, ScrollView } from 'react-native';
 import { UserContext } from '../UserContext';
-import { Defs, LinearGradient,RadialGradient, Stop } from 'react-native-svg';
+import { Defs, RadialGradient, Stop } from 'react-native-svg';
 import QRCode from 'react-native-qrcode-svg';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
+import { LinearGradient } from 'expo-linear-gradient';  // Importa LinearGradient
 
 const Profile = ({ navigation }) => {
     const { user } = useContext(UserContext);
@@ -60,23 +61,46 @@ const Profile = ({ navigation }) => {
     }
 
     return (
-        
-        <SafeAreaView style={styles.container}>
+        <LinearGradient colors={['#34c1ee', '#ffffff']} style={styles.container}> {/* Fondo degradado */}
             <ScrollView contentContainerStyle={[styles.scrollContainer, { paddingBottom: 100 }]}>
+                {/* Cabecera de perfil con imagen y fondo */}
                 <View style={styles.profileHeader}>
+                    <View style={styles.profileBackground}></View>
                     <Image source={require('../assets/icons/user.png')} style={styles.photo} />
                 </View>
+
+                {/* Información del usuario */}
                 <View style={styles.infoContainer}>
-                    <Text style={styles.infoText}>Nombre: <Text style={styles.infoHighlight}>{user.nombre || 'No disponible'}</Text></Text>
-                    <Text style={styles.infoText}>Apellido: <Text style={styles.infoHighlight}>{user.apellido || 'No disponible'}</Text></Text>
-                    <Text style={styles.infoText}>Correo: <Text style={styles.infoHighlight}>{user.correo || 'No disponible'}</Text></Text>
-                    <Text style={styles.infoText}>Teléfono: <Text style={styles.infoHighlight}>{user.telefono || 'No disponible'}</Text></Text>
-                    <Text style={styles.infoText}>Estado: <Text style={styles.infoHighlight}>{user.estado || 'No disponible'}</Text></Text>
-                    <Text style={styles.infoText}>Tipo de usuario: <Text style={styles.infoHighlight}>{user.tipo_usuario || 'No disponible'}</Text></Text>
+                    <View style={styles.infoRow}>
+                        <Text style={styles.infoLabel}>Nombre:</Text>
+                        <Text style={styles.infoValue}>{user.nombre || 'No disponible'}</Text>
+                    </View>
+                    <View style={styles.infoRow}>
+                        <Text style={styles.infoLabel}>Apellido:</Text>
+                        <Text style={styles.infoValue}>{user.apellido || 'No disponible'}</Text>
+                    </View>
+                    <View style={styles.infoRow}>
+                        <Text style={styles.infoLabel}>Correo:</Text>
+                        <Text style={styles.infoValue}>{user.correo || 'No disponible'}</Text>
+                    </View>
+                    <View style={styles.infoRow}>
+                        <Text style={styles.infoLabel}>Teléfono:</Text>
+                        <Text style={styles.infoValue}>{user.telefono || 'No disponible'}</Text>
+                    </View>
+                    <View style={styles.infoRow}>
+                        <Text style={styles.infoLabel}>Estado:</Text>
+                        <Text style={styles.infoValue}>{user.estado || 'No disponible'}</Text>
+                    </View>
+                    <View style={styles.infoRow}>
+                        <Text style={styles.infoLabel}>Tipo de usuario:</Text>
+                        <Text style={styles.infoValue}>{user.tipo_usuario || 'No disponible'}</Text>
+                    </View>
                 </View>
+
+                {/* Botones: Generar QR y Cerrar sesión */}
                 {user.tipo_usuario === "Chofer" && (
-                    <TouchableOpacity style={styles.logoutButton} onPress={handleGenerateQRCode}>
-                        <Text style={styles.logoutText}>Generar Código QR</Text>
+                    <TouchableOpacity style={styles.button} onPress={handleGenerateQRCode}>
+                        <Text style={styles.buttonText}>Generar Código QR</Text>
                     </TouchableOpacity>
                 )}
                 {qrCodeVisible && user.rut && (
@@ -85,26 +109,27 @@ const Profile = ({ navigation }) => {
                             value={user.rut}
                             size={200}
                             getRef={qrSvgRef}
-                            color="url(#grad)" // Aquí referenciamos el degradado que definiremos
+                            color="url(#grad)" // Referencia al gradiente que definiremos
                         >
                             <Defs>
-                            <RadialGradient id="radialGrad" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
-                                <Stop offset="0%" stopColor="#7de7da" stopOpacity="1" />
-                                <Stop offset="100%" stopColor="#4b8ae1" stopOpacity="1" />
-                            </RadialGradient>
+                                <RadialGradient id="radialGrad" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+                                    <Stop offset="0%" stopColor="#7de7da" stopOpacity="1" />
+                                    <Stop offset="100%" stopColor="#4b8ae1" stopOpacity="1" />
+                                </RadialGradient>
                             </Defs>
                         </QRCode>
                         <Text style={styles.qrText}>RUT del QR: {user.rut}</Text>
-                        <TouchableOpacity style={styles.logoutButton} onPress={handleShareQRCode}>
-                            <Text style={styles.logoutText}>Guardar y Compartir QR</Text>
+                        <TouchableOpacity style={styles.button} onPress={handleShareQRCode}>
+                            <Text style={styles.buttonText}>Guardar y Compartir QR</Text>
                         </TouchableOpacity>
                     </View>
                 )}
-                <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-                    <Text style={styles.logoutText}>Cerrar Sesión</Text>
+
+                <TouchableOpacity style={styles.button} onPress={handleLogout}>
+                    <Text style={styles.buttonText}>Cerrar Sesión</Text>
                 </TouchableOpacity>
             </ScrollView>
-        </SafeAreaView>
+        </LinearGradient>
     );
 };
 
@@ -116,42 +141,71 @@ const styles = StyleSheet.create({
     },
     container: {
         flex: 1,
-        backgroundColor: '#87CEEB',
     },
     profileHeader: {
-        alignItems: 'center',
-        marginBottom: 20,
+        width: '100%',
+        height: 250,
+        position: 'relative',
+        top: -20,
+    },
+    profileBackground: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        borderBottomLeftRadius: 20,
+        borderBottomRightRadius: 20,
     },
     photo: {
-        width: 120,
-        height: 120,
-        borderRadius: 60,
+        width: 150,
+        height: 150,
+        borderRadius: 80,
         backgroundColor: '#FFF',
+        borderWidth: 0,
+        borderColor: '#FFF',
+        position: 'absolute',
+        top: 70,
+        left: '47%',
+        transform: [{ translateX: -60 }],
     },
     infoContainer: {
-        backgroundColor: '#FFFFFF',
-        borderRadius: 10,
         width: '90%',
         padding: 20,
-        marginBottom: 20,
+        marginTop: 40,
     },
-    infoText: {
+    infoRow: {
+        flexDirection: 'row',
+        alignItems: 'center',  // Alinea los elementos verticalmente
+        justifyContent: 'space-between',
+        marginBottom: 10,  // Espacio entre filas
+        borderWidth: 1,  // Borde del cuadro
+        borderColor: '#ccc',  // Color del borde
+        borderRadius: 5,  // Esquinas redondeadas
+        paddingVertical: 10,
+        paddingHorizontal: 15,
+        backgroundColor: '#fff', // Fondo blanco para cada cuadro
+    },
+    infoLabel: {
         fontSize: 16,
         color: '#333',
-        marginBottom: 10,
+        flex: 1,  // La etiqueta ocupa el 50% del espacio
     },
-    infoHighlight: {
+    infoValue: {
+        fontSize: 16,
         fontWeight: 'bold',
         color: '#333',
+        flex: 1,  // El valor ocupa el otro 50%
+        textAlign: 'right',  // Alineamos el valor a la derecha
     },
-    logoutButton: {
-        backgroundColor: '#1E90FF',
+    button: {
+        backgroundColor: '#34c1ee',
         borderRadius: 5,
         marginTop: 20,
         paddingVertical: 10,
         paddingHorizontal: 40,
     },
-    logoutText: {
+    buttonText: {
         fontSize: 16,
         color: '#FFFFFF',
         fontWeight: 'bold',
@@ -159,7 +213,6 @@ const styles = StyleSheet.create({
     qrContainer: {
         alignItems: 'center',
         marginTop: 20,
-        marginBottom: 20,
     },
     qrText: {
         marginTop: 10,

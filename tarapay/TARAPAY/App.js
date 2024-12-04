@@ -56,7 +56,7 @@ const App = () => {
                     name="HistorialScreen" 
                     component={HistorialScreen} 
                     options={{
-                        headerShown: true, // Mostrar encabezado para esta pantalla
+                        headerShown: false, // Mostrar encabezado para esta pantalla
                         title: "Historial",
                         headerStyle: { backgroundColor: "#80B4F7" },
                         headerTintColor: "#FFFFFF",
@@ -68,7 +68,7 @@ const App = () => {
                     name="AgregarSaldo" 
                     component={AgregarSaldo} 
                     options={{
-                        headerShown: true, // Muestra el encabezado solo para esta pantalla
+                        headerShown: false, // Muestra el encabezado solo para esta pantalla
                         title: "Agregar Saldo", // Título del encabezado
                     }} 
                 />

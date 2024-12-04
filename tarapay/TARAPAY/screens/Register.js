@@ -27,7 +27,7 @@ const Register = ({ navigation }) => {
         const estado = tipoUsuario === 'Adulto' ? 'Aceptado' : 'Pendiente';
 
         try {
-            const response = await fetch('http://192.168.1.88:50587/register', {
+            const response = await fetch('http://192.168.1.89:50587/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

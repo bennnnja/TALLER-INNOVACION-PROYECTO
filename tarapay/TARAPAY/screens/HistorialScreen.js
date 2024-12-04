@@ -9,6 +9,7 @@ import {
     Alert,
 } from "react-native";
 import { UserContext } from "../UserContext";
+import { LinearGradient } from 'expo-linear-gradient'; // Asegúrate de instalar expo-linear-gradient
 
 const HistorialScreen = ({ navigation }) => {
     const { user } = useContext(UserContext);
@@ -16,45 +17,46 @@ const HistorialScreen = ({ navigation }) => {
     const [loading, setLoading] = useState(true);
 
     const fetchHistorial = async () => {
-        console.log("Iniciando fetchHistorial...");
         try {
-            const response = await fetch("http://192.168.1.88:50587/historial", {
+            const response = await fetch("http://192.168.1.89:50587/historial", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     rut: user?.rut,
-                    tipoUsuario: user?.tipo_usuario, // Enviar también el tipo de usuario
+                    tipoUsuario: user?.tipo_usuario,
                 }),
             });
-    
+
             if (!response.ok) {
                 throw new Error(`Error: ${response.status} - ${response.statusText}`);
             }
-    
+
             const data = await response.json();
             setHistorialData(data.historial);
         } catch (error) {
             console.error("Error al cargar el historial:", error.message);
             Alert.alert("Error", "No se pudo cargar el historial");
         } finally {
-            setLoading(false); // Detiene el indicador de carga
+            setLoading(false);
         }
     };
-    
-    
+
     useEffect(() => {
         fetchHistorial();
     }, []);
 
     return (
-        <SafeAreaView style={styles.container}>
+        <LinearGradient
+            colors={['#D0E8FF', '#A0C8FF']} // Definir los colores del degradado
+            style={styles.container}
+        >
             <Text style={styles.title}>Historial de Transacciones</Text>
             {loading ? (
                 <Text style={styles.loadingText}>Cargando...</Text>
             ) : historialData.length === 0 ? (
                 <Text style={styles.noDataText}>No hay transacciones disponibles</Text>
             ) : (
-                <ScrollView style={styles.historialList}>
+                <ScrollView contentContainerStyle={styles.historialList}>
                     {historialData.map((item) => (
                         <View key={item.id} style={styles.historialItem}>
                             <Text style={styles.itemText}>
@@ -69,37 +71,28 @@ const HistorialScreen = ({ navigation }) => {
                                 <Text style={styles.boldText}>Hora: </Text>
                                 {item.hora.split(".")[0]}
                             </Text>
-                            <Text
-                                style={[
-                                    styles.itemText,
-                                    { color: item.color }, // Color asignado desde el servidor
-                                ]}
-                            >
+                            <Text style={[styles.itemText, { color: item.color }]}>
                                 <Text style={styles.boldText}>Monto: </Text>
-                                {item.monto} {/* Monto con signo "+" o "-" */}
+                                {item.monto}
                             </Text>
                             <Text style={styles.itemText}>
                                 <Text style={styles.boldText}>RUT Chofer: </Text>
-                                {item.rut_chofer || item.rut_pasajero} {/* Mostrar el rut relevante */}
+                                {item.rut_chofer || item.rut_pasajero}
                             </Text>
                         </View>
                     ))}
                 </ScrollView>
             )}
-            <TouchableOpacity
-                style={styles.button}
-                onPress={() => navigation.goBack()}
-            >
+            <TouchableOpacity style={styles.button} onPress={() => navigation.goBack()}>
                 <Text style={styles.buttonText}>Volver</Text>
             </TouchableOpacity>
-        </SafeAreaView>
+        </LinearGradient>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#93C9FD",
         padding: 20,
     },
     title: {
@@ -107,50 +100,59 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         textAlign: "center",
         marginBottom: 20,
-        color: "#000",
-    },
-    loadingText: {
-        fontSize: 18,
-        color: "#000",
-        textAlign: "center",
-    },
-    noDataText: {
-        textAlign: "center",
-        fontSize: 18,
-        color: "#000",
+        color: "#333",
+        marginTop: 30, // Espacio adicional en la parte superior
     },
     historialList: {
-        flex: 1,
+        flexGrow: 1, // Asegura que el contenido del ScrollView ocupe todo el espacio disponible
+        justifyContent: "flex-start", // Alinea los elementos al principio del ScrollView
+        alignItems: "center", // Centra los elementos horizontalmente
     },
     historialItem: {
+        backgroundColor: "#FFFFFF", // Fondo blanco
         borderRadius: 10,
         padding: 15,
         marginBottom: 15,
+        borderWidth: 1,
+        borderColor: "#AAC4FF", // Borde azul claro
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.2,
+        shadowOpacity: 0.1,
         shadowRadius: 4,
-        elevation: 3,
+        elevation: 2, // Sombra en Android
+        width: "89%", // Reduce el ancho del cuadro
     },
     itemText: {
         fontSize: 16,
-        color: "#000",
+        color: "#333",
         marginBottom: 5,
     },
     boldText: {
         fontWeight: "bold",
     },
     button: {
-        backgroundColor: "#80B4F7",
-        padding: 15,
-        borderRadius: 10,
+        backgroundColor: "#34c1ee", // Color del botón especificado
+        padding: 10, // Reduce el tamaño del botón
+        borderRadius: 8,
         alignItems: "center",
-        marginTop: 20,
+        alignSelf: "center", // Centra el botón horizontalmente
+        marginTop: 10,
+        width: "40%", // Tamaño ajustado del botón
     },
     buttonText: {
         color: "#FFFFFF",
         fontWeight: "bold",
+        fontSize: 16,
+    },
+    loadingText: {
+        textAlign: "center",
         fontSize: 18,
+        color: "#555",
+    },
+    noDataText: {
+        textAlign: "center",
+        fontSize: 18,
+        color: "#999",
     },
 });
 

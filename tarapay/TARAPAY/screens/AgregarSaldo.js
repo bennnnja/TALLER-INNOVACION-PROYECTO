@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, Image, StyleSheet, Alert } from 'react-na
 import axios from 'axios';
 import { UserContext } from '../UserContext'; // Importa el contexto del usuario
 
-const AgregarSaldo = () => {
+const AgregarSaldo = ({ navigation }) => {
   const [selectedAmount, setSelectedAmount] = useState(null);
   const { user, setUser } = useContext(UserContext); // Obtén el usuario actual del contexto
 
@@ -17,7 +17,7 @@ const AgregarSaldo = () => {
       console.log(`Monto seleccionado: ${selectedAmount}`);
 
       // Llamada al backend para actualizar el saldo y registrar la transacción
-      const response = await axios.post('http://192.168.1.88:50587/add-saldo', {
+      const response = await axios.post('http://192.168.1.89:50587/add-saldo', {
         rutUsuario: user.rut,
         monto: selectedAmount,
       });
@@ -38,20 +38,19 @@ const AgregarSaldo = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>AGREGAR SALDO</Text>
+
       <View style={styles.buttonContainer}>
         {[1000, 3000, 5000, 10000].map((amount) => (
           <TouchableOpacity
             key={amount}
-            style={[
-              styles.amountButton,
-              selectedAmount === amount && styles.selectedButton,
-            ]}
+            style={[styles.amountButton, selectedAmount === amount && styles.selectedButton]}
             onPress={() => setSelectedAmount(amount)}
           >
             <Text style={styles.amountText}>${amount.toLocaleString()}</Text>
           </TouchableOpacity>
         ))}
       </View>
+
       <TouchableOpacity style={styles.webpayButton} onPress={handleWebpay}>
         <Image
           source={require('../assets/webpay.png')}
@@ -65,7 +64,6 @@ const AgregarSaldo = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
     padding: 20,
@@ -74,7 +72,7 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: 'bold',
     marginBottom: 20,
-    color: '#0055AA',
+    color: '#34c1ee',
   },
   buttonContainer: {
     marginBottom: 20,
@@ -89,7 +87,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   selectedButton: {
-    backgroundColor: '#0055AA',
+    backgroundColor: '#34c1ee',
   },
   amountText: {
     fontSize: 18,

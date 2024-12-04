@@ -43,7 +43,7 @@ export default function ScanScreen({ navigation }) {
       }); */
         // Enviar datos al backend
         
-        const response = await axios.post("http://192.168.1.88:50587/transaction", {
+        const response = await axios.post("http://192.168.1.89:50587/transaction", {
             rutPasajero: user.rut, // Usamos el RUT del pasajero desde el contexto
             rutChofer,
             tipoUsuario: user.tipo_usuario, // También obtenemos el tipo de usuario desde el contexto

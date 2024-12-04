@@ -13,7 +13,7 @@ export default function PayScreen({ navigation }) {
   useEffect(() => {
     const fetchLastTransaction = async () => {
       try {
-        const response = await axios.post("http://192.168.1.88:50587/historial", {
+        const response = await axios.post("http://192.168.1.89:50587/historial", {
           rut: user?.rut, // Cambiar de rutPasajero a rut
           tipoUsuario: user?.tipo_usuario, // Agregar tipoUsuario para cumplir con el endpoint
         });
