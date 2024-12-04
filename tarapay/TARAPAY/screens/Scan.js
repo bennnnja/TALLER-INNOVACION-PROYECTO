@@ -9,6 +9,7 @@ export default function ScanScreen({ navigation }) {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
   const { user, setUser } = useContext(UserContext); // Obtenemos los datos del usuario desde el contexto
+  const { user, setUser } = useContext(UserContext); // Obtenemos los datos del usuario desde el contexto
 
   useEffect(() => {
     const getCameraPermissions = async () => {
@@ -41,6 +42,10 @@ export default function ScanScreen({ navigation }) {
             rutChofer,
             tipoUsuario: user.tipo_usuario, // También obtenemos el tipo de usuario desde el contexto
         });
+        setUser((prevUser) => ({
+          ...prevUser,
+          saldo: prevUser.saldo - response.data.tarifa,
+        }));
         setUser((prevUser) => ({
           ...prevUser,
           saldo: prevUser.saldo - response.data.tarifa,
