@@ -59,37 +59,42 @@ const SignUp = ({ navigation }) => {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Iniciar Sesión</Text>
+            {/* Encabezado con fondo celeste */}
+            <View style={styles.header}>
+                <Image
+                    source={require('../assets/logoTarapay.png')} // Ruta a tu logo
+                    style={styles.logoTarapay}
+                />
+            </View>
 
-            <TextInput
-                style={styles.input}
-                placeholder="Correo Electrónico"
-                value={correo}
-                onChangeText={setEmail}
-                keyboardType="email-address"
-            />
-            <TextInput
-                style={styles.input}
-                placeholder="Contraseña"
-                secureTextEntry
-                value={contrasena}
-                onChangeText={setPassword}
-            />
-            <TouchableOpacity style={styles.button} onPress={handleLogin}>
-                <Text style={styles.buttonText}>Iniciar Sesión</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-                style={styles.registerButton}
-                onPress={() => navigation.navigate('Register')}
-            >
-                <Text style={styles.registerButtonText}>¿No tienes cuenta? Regístrate</Text>
-            </TouchableOpacity>
+            {/* Contenedor del formulario */}
+            <View style={styles.formContainer}>
+                <Text style={styles.title}>Inicio de Sesión</Text>
 
-            {/* Imagen del logo en la parte inferior */}
-            <Image
-                source={require('../assets/tarapay-logo.jpeg')} // Ruta a tu logo
-                style={styles.logo}
-            />
+                <TextInput
+                    style={styles.input}
+                    placeholder="Correo Electrónico"
+                    value={correo}
+                    onChangeText={setEmail}
+                    keyboardType="email-address"
+                />
+                <TextInput
+                    style={styles.input}
+                    placeholder="Contraseña"
+                    secureTextEntry
+                    value={contrasena}
+                    onChangeText={setPassword}
+                />
+                <TouchableOpacity style={styles.button} onPress={handleLogin}>
+                    <Text style={styles.buttonText}>Iniciar Sesión</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    style={styles.registerButton}
+                    onPress={() => navigation.navigate('Register')}
+                >
+                    <Text style={styles.registerButtonText}>¿No tienes cuenta? Regístrate</Text>
+                </TouchableOpacity>
+            </View>
         </View>
     );
 };
@@ -97,15 +102,32 @@ const SignUp = ({ navigation }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        backgroundColor: '#fff',
+    },
+    header: {
+        flex: 1,
+        backgroundColor: '#34c1ee',
         justifyContent: 'center',
         alignItems: 'center',
-        padding: 20,
-        backgroundColor: '#f7f7f7',
+        borderBottomLeftRadius: 40,
+        borderBottomRightRadius: 40,
+    },
+    logoTarapay: {
+        width: 220,
+        height: 220,
+        resizeMode: 'contain',
+    },
+    formContainer: {
+        flex: 2,
+        paddingHorizontal: 20,
+        paddingTop: 40,
     },
     title: {
         fontSize: 24,
         fontWeight: 'bold',
-        marginBottom: 20,
+        color: '#000',
+        textAlign: 'center',
+        marginBottom: 30,
     },
     input: {
         width: '100%',
@@ -120,10 +142,11 @@ const styles = StyleSheet.create({
     button: {
         width: '100%',
         height: 50,
-        backgroundColor: '#4CAF50',
+        backgroundColor: '#34c1ee',
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 10,
+        marginTop: 20,
     },
     buttonText: {
         color: '#fff',
@@ -131,17 +154,12 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     registerButton: {
-        marginTop: 10,
+        marginTop: 15,
+        alignSelf: 'center',
     },
     registerButtonText: {
-        color: '#007BFF',
+        color: '#34c1ee',
         fontSize: 16,
-    },
-    logo: {
-        marginTop: 30, // Espacio entre el botón y la imagen
-        width: 120,  // Tamaño de la imagen
-        height: 120, // Tamaño de la imagen
-        resizeMode: 'contain', // Ajusta la imagen al contenedor
     },
 });
 

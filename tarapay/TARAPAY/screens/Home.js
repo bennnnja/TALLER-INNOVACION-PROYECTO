@@ -3,7 +3,6 @@ import {
     SafeAreaView,
     View,
     Text,
-    Image,
     TouchableOpacity,
     StyleSheet,
     ScrollView,
@@ -12,6 +11,7 @@ import { UserContext } from "../UserContext"; // Importar el contexto
 import { COLORS, SIZES, FONTS, icons, images } from "../constants";
 import axios from "axios";
 import { LinearGradient } from 'expo-linear-gradient'; // Asegúrate de instalar expo-linear-gradient
+import { Image } from 'expo-image';
 
 const Home = ({ navigation }) => {
     const { user } = useContext(UserContext); // Obtener datos del usuario desde el contexto
@@ -80,27 +80,34 @@ const Home = ({ navigation }) => {
 
     // Renderizar el recuadro de estado del usuario
     function renderEstadoUsuario() {
-        let mensaje = "Sin información del estado.";
-        let tarifa = 0;
-    
-        if (user?.estado === "Pendiente") {
-            mensaje = `Actualmente tu tarifa es $600. Recuerda que debes enviar tus documentos al correo ejemplo@gmail.com para que tu tarifa sea la de ${user?.tipo_usuario || "N/A"}`;
-        } else if (user?.estado === "Aceptado") {
-            tarifa = {
-                Estudiante: 220,
-                Adulto: 600,
-                Adulto_mayor: 350,
-            }[user?.tipo_usuario] || 0;
-    
-            mensaje = `Tu tipo de usuario es ${user?.tipo_usuario || "Desconocido"} y tu tarifa es $${tarifa}`;
-        }
+        const tarifa = {
+            Estudiante: 220,
+            Adulto: 600,
+            Adulto_mayor: 350,
+            Chofer: 600,
+        };
     
         return (
             <View style={styles.estadoUsuarioContainer}>
-                <Text style={styles.estadoUsuarioText}>{mensaje}</Text>
+                {user?.estado === "Pendiente" ? (
+                    <Text style={styles.estadoUsuarioText}>
+                        Actualmente tu tarifa es $600. Recuerda que debes enviar tus documentos al correo 
+                        ejemplo@gmail.com para que tu tarifa sea la de {user?.tipo_usuario || "N/A"}.
+                    </Text>
+                ) : user?.estado === "Aceptado" ? (
+                    <Text style={styles.estadoUsuarioText}>
+                        Tu tipo de usuario es {user?.tipo_usuario || "Desconocido"} y tu tarifa es 
+                        ${tarifa[user?.tipo_usuario] || 0}.
+                    </Text>
+                ) : (
+                    <Text style={styles.estadoUsuarioText}>
+                        Sin información del estado.
+                    </Text>
+                )}
             </View>
         );
     }
+    
     
 
     // Renderizar historial con estilo mejorado
@@ -141,9 +148,9 @@ const Home = ({ navigation }) => {
                 </View>
                 <View style={styles.publicidadContainer}>
     <Image
-        source={require('../assets/nike.gif')} // Ruta al archivo GIF
+        source={require('../assets/bannerHamb.gif')} // Ruta al archivo GIF
         style={styles.publicidadImage}
-        resizeMode="cover"
+        contentFit="cover"
     />
 </View>
 
@@ -157,7 +164,7 @@ const Home = ({ navigation }) => {
                 <Text style={styles.userName}>{user?.nombre} {user?.apellido}</Text>
     
                 {/* Agregar el logo en la parte superior derecha */}
-                <Image source={require('../assets/tarapay-logo.jpeg')} style={styles.logo} />
+                <Image source={require('../assets/logoTarapay.png')} style={styles.logo} />
             </View>
         );
     }
@@ -183,7 +190,7 @@ const Home = ({ navigation }) => {
                 <View style={styles.contentContainer}>
                     {renderUserProfile()}
                     {renderSaldo()}
-                    {renderEstadoUsuario()} {/* Aquí se renderiza el recuadro de estado */}
+                    {renderEstadoUsuario()}
                     {renderHistorialPublicidad()}
                 </View>
                 {renderMenu()}
@@ -207,6 +214,7 @@ const styles = StyleSheet.create({
         width: 40,
         height: 40,
         tintColor: "#000",
+        
     },
     contentContainer: {
         flex: 1,
@@ -298,6 +306,11 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         width: "100%",
         paddingHorizontal: 10,
+        shadowColor: "#000", // Sombra para darle un efecto de profundidad
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5, // Sombra en Android
     },
     historialContainer: {
         width: "50%",
@@ -306,10 +319,6 @@ const styles = StyleSheet.create({
         padding: 10,
         height: 350,
         marginRight: 10,
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.25,
-        shadowRadius: 4,
     },
     historialText: {
         fontSize: 20,
@@ -349,25 +358,15 @@ const styles = StyleSheet.create({
         height: 400, // Define una altura para que el GIF no se expanda demasiado
         justifyContent: "center", // Centra el GIF verticalmente
         alignItems: "center", // Centra el GIF horizontalmente
-        marginTop: 1, // Añade un pequeño espacio encima
         borderRadius: 10, // Bordes redondeados para el contenedor
         overflow: 'hidden', // Asegura que el contenido no sobresalga
-        shadowColor: "#000", // Sombra para darle un efecto de profundidad
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.25,
-        shadowRadius: 4,
-        elevation: 5, // Sombra en Android
-    },
-    publicidadImage: {
-        width: '100%', // Hace que el GIF ocupe el ancho completo del contenedor
-        height: '100%', // Ajusta la altura para que el GIF no distorsione
-        borderRadius: 10, // Redondea los bordes del GIF
     },
     
     publicidadImage: {
         width: "100%",
-        height: 500,
+        height: 380,
         borderRadius: 10,
+        marginBottom: 120,
     },
     menuContainer: {
         flexDirection: "row",
@@ -404,7 +403,7 @@ const styles = StyleSheet.create({
     logo: {
         position: 'absolute', // Permite posicionar el logo
         top: -15, // Lo coloca en la parte superior
-        right: -250, // Lo coloca al extremo derecho
+        right: -210, // Lo coloca al extremo derecho
         width: 50, // Ajusta el tamaño del logo
         height: 50,
         borderRadius: 25, // Redondea el logo si es necesario

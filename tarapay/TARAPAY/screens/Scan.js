@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Text, View, StyleSheet, Button, Alert } from "react-native";
+import { Text, View, StyleSheet, Button, Alert, Image } from "react-native";
 import { Camera, CameraView } from "expo-camera";  // Usamos CameraView para la versión que estás utilizando
 import { UserContext } from "../UserContext"; // Importa el contexto
 import axios from "axios";
+import { COLORS, FONTS, SIZES, icons, images } from "../constants";
 
 export default function ScanScreen({ navigation }) {
   const [hasPermission, setHasPermission] = useState(null);
@@ -73,6 +74,28 @@ export default function ScanScreen({ navigation }) {
     return <Text>No tienes acceso a la cámara</Text>;
   }
 
+  function renderScanFocus() {
+    return (
+        <View
+            style={{
+                flex: 1,
+                alignItems: 'center',
+                justifyContent: 'center'
+            }}
+        >
+            <Image
+                source={images.focus}
+                resizeMode="stretch"
+                style={{
+                    marginTop: "-15%",
+                    width: 300,
+                    height: 300
+                }}
+            />
+        </View>
+    )
+}
+
   return (
     <View style={styles.container}>
       <CameraView
@@ -83,6 +106,7 @@ export default function ScanScreen({ navigation }) {
         }}
       />
       {scanned && <Button title={"Presiona para escanear de nuevo"} onPress={() => setScanned(false)} />}
+      {renderScanFocus()}
     </View>
   );
 }
