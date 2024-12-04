@@ -6,10 +6,9 @@ import {
     StyleSheet,
     ScrollView,
     TouchableOpacity,
-    Alert,
 } from "react-native";
 import { UserContext } from "../UserContext";
-import { LinearGradient } from 'expo-linear-gradient'; // Asegúrate de instalar expo-linear-gradient
+import { LinearGradient } from 'expo-linear-gradient';
 
 const HistorialScreen = ({ navigation }) => {
     const { user } = useContext(UserContext);
@@ -18,7 +17,7 @@ const HistorialScreen = ({ navigation }) => {
 
     const fetchHistorial = async () => {
         try {
-            const response = await fetch("http://192.168.1.89:50587/historial", {
+            const response = await fetch("http://192.168.1.109:50587/historial", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -27,15 +26,21 @@ const HistorialScreen = ({ navigation }) => {
                 }),
             });
 
+            // Verificar si la respuesta fue exitosa
             if (!response.ok) {
-                throw new Error(`Error: ${response.status} - ${response.statusText}`);
+                // Manejar el caso específico de 404
+                if (response.status === 404) {
+                    setHistorialData([]); // No hay historial
+                } else {
+                    throw new Error(`Error: ${response.status} - ${response.statusText}`);
+                }
+            } else {
+                const data = await response.json();
+                setHistorialData(data.historial || []); // Asegurarse de que sea un array
             }
-
-            const data = await response.json();
-            setHistorialData(data.historial);
         } catch (error) {
             console.error("Error al cargar el historial:", error.message);
-            Alert.alert("Error", "No se pudo cargar el historial");
+            setHistorialData([]); // Asegurarse de que no haya datos si hay un error
         } finally {
             setLoading(false);
         }
@@ -47,7 +52,7 @@ const HistorialScreen = ({ navigation }) => {
 
     return (
         <LinearGradient
-            colors={['#D0E8FF', '#A0C8FF']} // Definir los colores del degradado
+            colors={['#edfbff', '#a9eaff']}
             style={styles.container}
         >
             <Text style={styles.title}>Historial de Transacciones</Text>
@@ -101,26 +106,26 @@ const styles = StyleSheet.create({
         textAlign: "center",
         marginBottom: 20,
         color: "#333",
-        marginTop: 30, // Espacio adicional en la parte superior
+        marginTop: 30,
     },
     historialList: {
-        flexGrow: 1, // Asegura que el contenido del ScrollView ocupe todo el espacio disponible
-        justifyContent: "flex-start", // Alinea los elementos al principio del ScrollView
-        alignItems: "center", // Centra los elementos horizontalmente
+        flexGrow: 1,
+        justifyContent: "flex-start",
+        alignItems: "center",
     },
     historialItem: {
-        backgroundColor: "#FFFFFF", // Fondo blanco
+        backgroundColor: "#FFFFFF",
         borderRadius: 10,
         padding: 15,
         marginBottom: 15,
         borderWidth: 1,
-        borderColor: "#AAC4FF", // Borde azul claro
+        borderColor: "#AAC4FF",
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
         shadowRadius: 4,
-        elevation: 2, // Sombra en Android
-        width: "89%", // Reduce el ancho del cuadro
+        elevation: 2,
+        width: "89%",
     },
     itemText: {
         fontSize: 16,
@@ -131,13 +136,13 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
     },
     button: {
-        backgroundColor: "#34c1ee", // Color del botón especificado
-        padding: 10, // Reduce el tamaño del botón
+        backgroundColor: "#34c1ee",
+        padding: 10,
         borderRadius: 8,
         alignItems: "center",
-        alignSelf: "center", // Centra el botón horizontalmente
+        alignSelf: "center",
         marginTop: 10,
-        width: "40%", // Tamaño ajustado del botón
+        width: "40%",
     },
     buttonText: {
         color: "#FFFFFF",

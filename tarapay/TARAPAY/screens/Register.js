@@ -23,11 +23,10 @@ const Register = ({ navigation }) => {
     const tiposUsuario = ['Estudiante', 'Adulto', 'Adulto Mayor', 'Chofer'];
 
     const handleRegister = async () => {
-        // Determinar estado según el tipo de usuario
         const estado = tipoUsuario === 'Adulto' ? 'Aceptado' : 'Pendiente';
 
         try {
-            const response = await fetch('http://192.168.1.89:50587/register', {
+            const response = await fetch('http://192.168.1.109:50587/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -48,7 +47,7 @@ const Register = ({ navigation }) => {
 
             if (response.status === 201) {
                 Alert.alert('Éxito', data.message);
-                navigation.navigate('SignUp'); // Redirigir a la pantalla de inicio de sesión
+                navigation.navigate('SignUp');
             } else {
                 Alert.alert('Error', data.message);
             }
@@ -59,7 +58,7 @@ const Register = ({ navigation }) => {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Registro</Text>
+            <Text style={styles.title}>Crear Cuenta</Text>
 
             <TextInput
                 style={styles.input}
@@ -155,14 +154,14 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#f7f7f7',
+        backgroundColor: '#f0faff',
         padding: 20,
     },
     title: {
         fontSize: 28,
         fontWeight: 'bold',
+        color: '#34c1ee',
         marginBottom: 20,
-        color: '#333',
     },
     input: {
         width: '100%',
@@ -198,7 +197,7 @@ const styles = StyleSheet.create({
     button: {
         width: '100%',
         height: 50,
-        backgroundColor: '#4CAF50',
+        backgroundColor: '#34c1ee',
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 10,
@@ -210,18 +209,11 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     backButton: {
-        width: '100%',
-        height: 50,
-        backgroundColor: '#f44336',
-        justifyContent: 'center',
-        alignItems: 'center',
-        borderRadius: 10,
-        marginTop: 10,
+        marginTop: 15,
     },
     backButtonText: {
-        color: '#fff',
+        color: '#34c1ee',
         fontSize: 16,
-        fontWeight: 'bold',
     },
     modalContainer: {
         flex: 1,

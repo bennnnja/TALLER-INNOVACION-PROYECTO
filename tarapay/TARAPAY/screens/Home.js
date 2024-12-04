@@ -22,30 +22,39 @@ const Home = ({ navigation }) => {
         const fetchTransacciones = async () => {
             if (user?.rut) {
                 try {
-                    const response = await axios.post("http://192.168.1.89:50587/historial", {
+                    const response = await axios.post("http://192.168.1.109:50587/historial", {
                         rut: user.rut,
-                        tipoUsuario: user.tipo_usuario, // Considerar el tipo de usuario
+                        tipoUsuario: user.tipo_usuario,
                     });
-        
-                    setUltimasTransacciones(response.data.historial.slice(0, 6)); // Obtener las últimas 6 transacciones
+    
+                    if (response.status === 200) {
+                        if (response.data.historial && response.data.historial.length > 0) {
+                            setUltimasTransacciones(response.data.historial.slice(0, 6));
+                        } else {
+                            setUltimasTransacciones([]);
+                        }
+                    } else {
+                        console.error("Error en la respuesta del servidor:", response.status);
+                    }
                 } catch (error) {
-                    console.error("Error al cargar las transacciones:", error);
+                    if (error.response) {
+                        // El servidor respondió con un código de estado que no está en el rango de 2xx
+                        if (error.response.status === 404) {
+                            // Manejar el caso específico de 404
+                            console.log("No se encontraron transacciones.");
+                            setUltimasTransacciones([]); // Puedes decidir no mostrar nada o mostrar un mensaje
+                        } else {
+                            console.error("Error en la respuesta del servidor:", error.response.status);
+                        }
+                    } else {
+                        // Error en la solicitud (por ejemplo, problemas de red)
+                        console.error("Error al cargar las transacciones:", error.message);
+                    }
                 }
             }
         };
         fetchTransacciones();
     }, [user?.rut]);
-
-    // Renderizar el encabezado
-    function renderHeader() {
-        return (
-            <View style={styles.headerContainer}>
-                <TouchableOpacity>
-                    <Image source={icons.logout} style={styles.iconHeader} />
-                </TouchableOpacity>
-            </View>
-        );
-    }
 
     // Renderizar el perfil del usuario
     function renderUserProfile() {
@@ -117,25 +126,29 @@ const Home = ({ navigation }) => {
                 <View style={styles.historialContainer}>
                     <Text style={styles.historialText}>Últimas Transacciones</Text>
                     <ScrollView style={styles.historialList}>
-                        {ultimasTransacciones.map((item) => (
-                            <View key={item.id} style={styles.historialItem}>
-                                <Text style={styles.historialItemText}>
-                                    <Text style={styles.boldText}>Fecha: </Text>
-                                    {item.fecha ? new Date(item.fecha).toLocaleDateString() : "N/A"} -{" "}
-                                    <Text style={styles.boldText}>Hora: </Text>
-                                    {item.hora ? item.hora.split(".")[0] : "N/A"}
-                                </Text>
-                                <Text
-                                    style={[
-                                        styles.historialItemText,
-                                        { color: item.monto > 0 ? "green" : "red" },
-                                    ]}
-                                >
-                                    <Text style={styles.boldText}>Monto: </Text>
-                                    {item.monto != null ? `${item.monto}` : "N/A"}
-                                </Text>
-                            </View>
-                        ))}
+                        {ultimasTransacciones.length > 0 ? (
+                            ultimasTransacciones.map((item) => (
+                                <View key={item.id} style={styles.historialItem}>
+                                    <Text style={styles.historialItemText}>
+                                        <Text style={styles.boldText}>Fecha: </Text>
+                                        {item.fecha ? new Date(item.fecha).toLocaleDateString() : "N/A"} -{" "}
+                                        <Text style={styles.boldText}>Hora: </Text>
+                                        {item.hora ? item.hora.split(".")[0] : "N/A"}
+                                    </Text>
+                                    <Text
+                                        style={[
+                                            styles.historialItemText,
+                                            { color: item.monto > 0 ? "green" : "red" },
+                                        ]}
+                                    >
+                                        <Text style={styles.boldText}>Monto: </Text>
+                                        {item.monto != null ? `${item.monto}` : "N/A"}
+                                    </Text>
+                                </View>
+                            ))
+                        ) : (
+                            <Text style={styles.noTransactionsText}>No tienes transacciones.</Text>
+                        )}
                     </ScrollView>
                     <TouchableOpacity
                         style={styles.verHistorialButton}
@@ -147,13 +160,12 @@ const Home = ({ navigation }) => {
                     </TouchableOpacity>
                 </View>
                 <View style={styles.publicidadContainer}>
-    <Image
-        source={require('../assets/bannerHamb.gif')} // Ruta al archivo GIF
-        style={styles.publicidadImage}
-        contentFit="cover"
-    />
-</View>
-
+                    <Image
+                        source={require('../assets/bannerHamb.gif')} // Ruta al archivo GIF
+                        style={styles.publicidadImage}
+                        contentFit="cover"
+                    />
+                </View>
             </View>
         );
     }
@@ -202,7 +214,7 @@ const Home = ({ navigation }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingTop: 20,
+        paddingTop: 80,
     },
     headerContainer: {
         flexDirection: "row",
@@ -403,7 +415,7 @@ const styles = StyleSheet.create({
     logo: {
         position: 'absolute', // Permite posicionar el logo
         top: -15, // Lo coloca en la parte superior
-        right: -210, // Lo coloca al extremo derecho
+        right: -190, // Lo coloca al extremo derecho
         width: 50, // Ajusta el tamaño del logo
         height: 50,
         borderRadius: 25, // Redondea el logo si es necesario

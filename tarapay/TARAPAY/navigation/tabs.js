@@ -141,7 +141,6 @@ const Tabs = () => {
           ),
         }}
       />
-      {/* Agregamos el nuevo Tab para Historial */}
     </Tab.Navigator>
   );
 };

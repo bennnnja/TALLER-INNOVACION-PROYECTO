@@ -14,7 +14,7 @@ export default function PayScreen({ navigation }) {
   useEffect(() => {
     const fetchLastTransaction = async () => {
       try {
-        const response = await axios.post("http://192.168.1.89:50587/historial", {
+        const response = await axios.post("http://192.168.1.109:50587/historial", {
           rut: user?.rut, // Cambiar de rutPasajero a rut
           tipoUsuario: user?.tipo_usuario, // Agregar tipoUsuario para cumplir con el endpoint
         });
@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 32, // Aumentar tamaño del título
     fontWeight: 'bold',
-    color: '#000',
+    color: '#34c1ee',
     fontFamily: 'Montserrat-Bold', // Asegúrate de que la fuente esté disponible
   },
   ticketImage: {
@@ -142,4 +142,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  button: {
+    backgroundColor: '#34c1ee',
+    borderRadius: 5,
+    marginTop: 20,
+    paddingVertical: 10,
+    paddingHorizontal: 40,
+},
+buttonText: {
+    fontSize: 16,
+    color: '#FFFFFF',
+    fontWeight: 'bold',
+},
 });

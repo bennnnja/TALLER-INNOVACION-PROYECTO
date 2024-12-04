@@ -61,13 +61,11 @@ const Profile = ({ navigation }) => {
     }
 
     return (
-        <LinearGradient colors={['#34c1ee', '#ffffff']} style={styles.container}> {/* Fondo degradado */}
+        <LinearGradient colors={['#34c1ee', '#ffffff']} style={styles.container}> 
             <ScrollView contentContainerStyle={[styles.scrollContainer, { paddingBottom: 100 }]}>
-                {/* Cabecera de perfil con imagen y fondo */}
                 <View style={styles.profileHeader}>
                     <View style={styles.profileBackground}></View>
-                    <Image source={require('../assets/icons/user.png')} style={styles.photo} />
-                    {/* Logo superpuesto en la foto de perfil */}
+                    <Image source={require('../assets/icons/usuarioIcon.png')} style={styles.photo} />
                     <View style={styles.logoContainer}>
                         <Image 
                             source={require('../assets/icons/tarapay-logo.jpeg')} 
@@ -76,7 +74,6 @@ const Profile = ({ navigation }) => {
                     </View>
                 </View>
 
-                {/* Información del usuario */}
                 <View style={styles.infoContainer}>
                     <View style={styles.infoRow}>
                         <Text style={styles.infoLabel}>Nombre:</Text>
@@ -104,7 +101,6 @@ const Profile = ({ navigation }) => {
                     </View>
                 </View>
 
-                {/* Botones: Generar QR y Cerrar sesión */}
                 {user.tipo_usuario === "Chofer" && (
                     <TouchableOpacity style={styles.button} onPress={handleGenerateQRCode}>
                         <Text style={styles.buttonText}>Generar Código QR</Text>

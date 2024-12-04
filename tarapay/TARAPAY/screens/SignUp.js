@@ -17,7 +17,7 @@ const SignUp = ({ navigation }) => {
 
     const handleLogin = async () => {
         try {
-            const response = await fetch('http://192.168.1.89:50587/login', {
+            const response = await fetch('http://192.168.1.109:50587/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -102,7 +102,7 @@ const SignUp = ({ navigation }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fff',
+        backgroundColor: '#f0faff',
     },
     header: {
         flex: 1,

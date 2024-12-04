@@ -175,6 +175,7 @@ app.post('/transaction', async (req, res) => {
         estudiante: 220,
         adulto: 600,
         adulto_mayor: 350,
+        chofer: 600,
     };
 
     try {

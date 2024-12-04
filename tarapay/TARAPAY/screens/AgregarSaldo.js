@@ -17,7 +17,7 @@ const AgregarSaldo = ({ navigation }) => {
       console.log(`Monto seleccionado: ${selectedAmount}`);
 
       // Llamada al backend para actualizar el saldo y registrar la transacción
-      const response = await axios.post('http://192.168.1.89:50587/add-saldo', {
+      const response = await axios.post('http://192.168.1.109:50587/add-saldo', {
         rutUsuario: user.rut,
         monto: selectedAmount,
       });

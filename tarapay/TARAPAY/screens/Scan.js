@@ -8,7 +8,7 @@ import { COLORS, FONTS, SIZES, icons, images } from "../constants";
 export default function ScanScreen({ navigation }) {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
-  const { user } = useContext(UserContext); // Obtenemos los datos del usuario desde el contexto
+  const { user, setUser } = useContext(UserContext); // Obtenemos los datos del usuario desde el contexto
 
   useEffect(() => {
     const getCameraPermissions = async () => {
@@ -35,20 +35,16 @@ export default function ScanScreen({ navigation }) {
             Alert.alert("Error", "El usuario no tiene un RUT válido.");
             setScanned(false);
             return; // Salir si el usuario no tiene un RUT
-        }
-
-       /* console.log("Datos enviados al backend:", {
-          rutPasajero: user.rut,
-          rutChofer,
-          tipoUsuario: user.tipo_usuario,
-      }); */
-        // Enviar datos al backend
-        
-        const response = await axios.post("http://192.168.1.89:50587/transaction", {
+        }        
+        const response = await axios.post("http://192.168.1.109:50587/transaction", {
             rutPasajero: user.rut, // Usamos el RUT del pasajero desde el contexto
             rutChofer,
             tipoUsuario: user.tipo_usuario, // También obtenemos el tipo de usuario desde el contexto
         });
+        setUser((prevUser) => ({
+          ...prevUser,
+          saldo: prevUser.saldo - response.data.tarifa,
+        }));
         console.log("Respuesta del backend: ", response.data); // Verifica la respuesta del backend
         Alert.alert("Éxito", `Pago realizado. Monto: $${response.data.tarifa}`);
        
