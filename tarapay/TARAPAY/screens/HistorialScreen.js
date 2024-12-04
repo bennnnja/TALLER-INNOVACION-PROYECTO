@@ -18,7 +18,7 @@ const HistorialScreen = ({ navigation }) => {
 
     const fetchHistorial = async () => {
         try {
-            const response = await fetch("http://192.168.1.89:50587/historial", {
+            const response = await fetch("http://192.168.0.2:50587/historial", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({

@@ -17,7 +17,7 @@ const AgregarSaldo = ({ navigation }) => {
       console.log(`Monto seleccionado: ${selectedAmount}`);
 
       // Llamada al backend para actualizar el saldo y registrar la transacción
-      const response = await axios.post('http://192.168.1.89:50587/add-saldo', {
+      const response = await axios.post('http://192.168.0.2:50587/add-saldo', {
         rutUsuario: user.rut,
         monto: selectedAmount,
       });
@@ -57,6 +57,15 @@ const AgregarSaldo = ({ navigation }) => {
           style={styles.webpayImage}
         />
       </TouchableOpacity>
+
+      
+      <View style={styles.publicidadContainer}>
+        <Image
+          source={require('../assets/saledescuento.gif')} // Ruta al archivo GIF
+          style={styles.publicidadImage}
+          contentFit="cover"
+        />
+      </View>
     </View>
   );
 };
@@ -101,6 +110,22 @@ const styles = StyleSheet.create({
     width: 250,
     height: 70,
     resizeMode: 'contain',
+  },
+
+  // Estilos del banner de publicidad
+  publicidadContainer: {
+    marginTop: 30,
+    width: '100%',  // Ajustamos el tamaño del banner para hacerlo más pequeño
+    alignItems: 'center',
+    marginBottom: 15,  // Separación con el contenido de abajo
+    borderRadius: 15, // Bordes redondeados para el contenedor
+    overflow: 'hidden', // Asegura que el contenido no sobresalga
+  },
+  publicidadImage: {
+    width: '100%',  // Ancho completo del contenedor, pero en proporción 4:3
+    height: 'auto',  // Altura automática para mantener la proporción
+    aspectRatio: 3 / 1,  
+    resizeMode: 'contain',  // Mantiene la proporción de la imagen
   },
 });
 
