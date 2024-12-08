@@ -214,7 +214,7 @@ const Home = ({ navigation }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingTop: 80,
+        paddingTop: 60,
     },
     headerContainer: {
         flexDirection: "row",
@@ -415,7 +415,7 @@ const styles = StyleSheet.create({
     logo: {
         position: 'absolute', // Permite posicionar el logo
         top: -15, // Lo coloca en la parte superior
-        right: -190, // Lo coloca al extremo derecho
+        right: -220, // Lo coloca al extremo derecho
         width: 50, // Ajusta el tamaño del logo
         height: 50,
         borderRadius: 25, // Redondea el logo si es necesario

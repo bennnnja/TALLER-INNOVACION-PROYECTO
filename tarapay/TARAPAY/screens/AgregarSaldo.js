@@ -1,7 +1,8 @@
 import React, { useState, useContext } from 'react';
-import { View, Text, TouchableOpacity, Image, StyleSheet, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import axios from 'axios';
 import { UserContext } from '../UserContext'; // Importa el contexto del usuario
+import { Image } from 'expo-image';
 
 const AgregarSaldo = ({ navigation }) => {
   const [selectedAmount, setSelectedAmount] = useState(null);
