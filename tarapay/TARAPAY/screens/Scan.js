@@ -45,10 +45,6 @@ export default function ScanScreen({ navigation }) {
           ...prevUser,
           saldo: prevUser.saldo - response.data.tarifa,
         }));
-        setUser((prevUser) => ({
-          ...prevUser,
-          saldo: prevUser.saldo - response.data.tarifa,
-        }));
         console.log("Respuesta del backend: ", response.data); // Verifica la respuesta del backend
         Alert.alert("Éxito", `Pago realizado. Monto: $${response.data.tarifa}`);
        
