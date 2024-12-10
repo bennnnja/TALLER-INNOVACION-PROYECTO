@@ -68,8 +68,8 @@ const App = () => {
                     name="AgregarSaldo" 
                     component={AgregarSaldo} 
                     options={{
-                        headerShown: false, // Muestra el encabezado solo para esta pantalla
-                        title: "Agregar Saldo", // Título del encabezado
+                        headerShown: true, // Muestra el encabezado solo para esta pantalla
+                        title: "", // Título del encabezado
                     }} 
                 />
             </Stack.Navigator>

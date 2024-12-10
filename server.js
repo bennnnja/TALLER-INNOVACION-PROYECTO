@@ -105,24 +105,29 @@ app.post('/historial', async (req, res) => {
         if (tipoUsuario.toLowerCase() === 'chofer') {
             // Obtener transacciones como chofer
             const choferResult = await pool.query(`
-                SELECT id_transaccion AS id, fecha, hora, monto, tipo_transaccion, usuario_rut AS rut_pasajero
+                SELECT id_transaccion AS id, fecha, hora, monto, tipo_transaccion, usuario_rut AS rut_pasajero, rut_chofer
                 FROM transaccion
                 WHERE rut_chofer = $1
                 ORDER BY fecha DESC, hora DESC
             `, [rut]);
 
             const pasajeroResult = await pool.query(`
-                SELECT id_transaccion AS id, fecha, hora, monto, tipo_transaccion, rut_chofer
+                SELECT id_transaccion AS id, fecha, hora, monto, tipo_transaccion, rut_chofer, usuario_rut AS rut_pasajero
                 FROM transaccion
                 WHERE usuario_rut = $1
                 ORDER BY fecha DESC, hora DESC
             `, [rut]);
 
-            result = [...choferResult.rows, ...pasajeroResult.rows];
+            // Filtrar transacciones donde rut_chofer y rut_pasajero sean iguales
+            const filteredChoferResult = choferResult.rows.filter(
+                transaccion => transaccion.rut_chofer !== transaccion.rut_pasajero
+            );
+
+            result = [...filteredChoferResult, ...pasajeroResult.rows];
         } else {
             // Obtener transacciones solo como pasajero
             const pasajeroResult = await pool.query(`
-                SELECT id_transaccion AS id, fecha, hora, monto, tipo_transaccion, rut_chofer
+                SELECT id_transaccion AS id, fecha, hora, monto, tipo_transaccion, rut_chofer, usuario_rut AS rut_pasajero
                 FROM transaccion
                 WHERE usuario_rut = $1
                 ORDER BY fecha DESC, hora DESC
@@ -160,7 +165,6 @@ app.post('/historial', async (req, res) => {
         res.status(500).json({ message: "Error interno del servidor" });
     }
 });
-
 
 
 

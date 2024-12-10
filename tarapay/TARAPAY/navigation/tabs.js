@@ -58,65 +58,12 @@ const Tabs = () => {
         }}
       />
       <Tab.Screen
-        name="AgregarSaldo"
-        component={AgregarSaldo}
-        options={{
-          tabBarIcon: ({ focused }) => (
-            <View style={styles.iconContainer}>
-              <Image
-                source={icons.wallet} // Icono de Agregar Saldo
-                resizeMode="contain"
-                style={{
-                  width: 25,
-                  height: 25,
-                  tintColor: focused ? COLORS.primary : COLORS.secondary,
-                }}
-              />
-              <Text
-                style={[styles.label, { color: focused ? COLORS.primary : COLORS.secondary }]}
-              >
-                Saldo
-              </Text>
-            </View>
-          ),
-        }}
-      />
-      <Tab.Screen
         name="Scan"
         component={Scan}
         options={{
           tabBarButton: (props) => <CustomScanButton {...props} />,
         }}
       />
-<Tab.Screen
-  name="Historial"
-  component={HistorialScreen}
-  options={{
-    tabBarIcon: ({ focused }) => (
-      <View style={styles.iconContainer}>
-        <Image
-          source={icons.history} // Asegúrate de tener un ícono para historial
-          resizeMode="contain"
-          style={{
-            width: 25,
-            height: 25,
-            tintColor: focused ? COLORS.primary : COLORS.secondary,
-          }}
-        />
-      </View>
-    ),
-    tabBarLabel: ({ focused }) => (
-      <Text
-        style={[
-          styles.label,
-          { color: focused ? COLORS.primary : COLORS.secondary, textAlign: 'center' },
-        ]}
-      >
-        Historial
-      </Text>
-    ),
-  }}
-/>
 
       <Tab.Screen
         name="Profile"

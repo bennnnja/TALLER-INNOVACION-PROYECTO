@@ -17,7 +17,7 @@ const HistorialScreen = ({ navigation }) => {
 
     const fetchHistorial = async () => {
         try {
-            const response = await fetch("http://192.168.1.109:50587/historial", {
+            const response = await fetch("http://192.168.1.91:50587/historial", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -62,8 +62,8 @@ const HistorialScreen = ({ navigation }) => {
                 <Text style={styles.noDataText}>No hay transacciones disponibles</Text>
             ) : (
                 <ScrollView contentContainerStyle={styles.historialList}>
-                    {historialData.map((item) => (
-                        <View key={item.id} style={styles.historialItem}>
+                            {historialData.map((item, index) => (
+                                <View key={`${item.id || 'fallback'}-${index}`} style={styles.historialItem}>
                             <Text style={styles.itemText}>
                                 <Text style={styles.boldText}>ID Pago: </Text>
                                 {item.id}

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useCallback } from "react";
 import {
     SafeAreaView,
     View,
@@ -7,66 +7,55 @@ import {
     StyleSheet,
     ScrollView,
 } from "react-native";
-import { UserContext } from "../UserContext"; // Importar el contexto
+import { UserContext } from "../UserContext";
 import { COLORS, SIZES, FONTS, icons, images } from "../constants";
 import axios from "axios";
-import { LinearGradient } from 'expo-linear-gradient'; // Asegúrate de instalar expo-linear-gradient
-import { Image } from 'expo-image';
+import { LinearGradient } from "expo-linear-gradient";
+import { Image } from "expo-image";
+import { useFocusEffect } from "@react-navigation/native"; // Para actualizar al volver
 
 const Home = ({ navigation }) => {
-    const { user } = useContext(UserContext); // Obtener datos del usuario desde el contexto
-    const [ultimasTransacciones, setUltimasTransacciones] = useState([]); // Estado para las transacciones
+    const { user } = useContext(UserContext);
+    const [ultimasTransacciones, setUltimasTransacciones] = useState([]);
 
-    // Obtener las últimas transacciones
-    useEffect(() => {
-        const fetchTransacciones = async () => {
-            if (user?.rut) {
-                try {
-                    const response = await axios.post("http://192.168.1.109:50587/historial", {
-                        rut: user.rut,
-                        tipoUsuario: user.tipo_usuario,
-                    });
-    
-                    if (response.status === 200) {
-                        if (response.data.historial && response.data.historial.length > 0) {
-                            setUltimasTransacciones(response.data.historial.slice(0, 6));
-                        } else {
-                            setUltimasTransacciones([]);
-                        }
-                    } else {
-                        console.error("Error en la respuesta del servidor:", response.status);
-                    }
-                } catch (error) {
-                    if (error.response) {
-                        // El servidor respondió con un código de estado que no está en el rango de 2xx
-                        if (error.response.status === 404) {
-                            // Manejar el caso específico de 404
-                            console.log("No se encontraron transacciones.");
-                            setUltimasTransacciones([]); // Puedes decidir no mostrar nada o mostrar un mensaje
-                        } else {
-                            console.error("Error en la respuesta del servidor:", error.response.status);
-                        }
-                    } else {
-                        // Error en la solicitud (por ejemplo, problemas de red)
-                        console.error("Error al cargar las transacciones:", error.message);
-                    }
+    // Función para obtener las transacciones
+    const fetchTransacciones = async () => {
+        if (user?.rut) {
+            try {
+                const response = await axios.post("http://192.168.1.91:50587/historial", {
+                    rut: user.rut,
+                    tipoUsuario: user.tipo_usuario,
+                });
+
+                if (response.status === 200 && response.data.historial) {
+                    setUltimasTransacciones(response.data.historial.slice(0, 6));
+                } else {
+                    setUltimasTransacciones([]);
                 }
+            } catch (error) {
+                console.error("Error al cargar las transacciones:", error.message);
             }
-        };
-        fetchTransacciones();
-    }, [user?.rut]);
+        }
+    };
+
+    // Actualizar historial al regresar a Home
+    useFocusEffect(
+        useCallback(() => {
+            fetchTransacciones();
+        }, [user?.rut])
+    );
 
     // Renderizar el perfil del usuario
     function renderUserProfile() {
         return (
             <View style={styles.userProfileContainer}>
-                <Image source={require('../assets/icons/user.png')} style={styles.profileImage} />
+                <Image source={require("../assets/icons/user.png")} style={styles.profileImage} />
                 <Text style={styles.userName}>
                     {user?.nombre || "Usuario"} {user?.apellido || ""}
                 </Text>
             </View>
         );
-    }    
+    }
 
     // Renderizar saldo con el botón de billetera
     function renderSaldo() {
@@ -85,7 +74,6 @@ const Home = ({ navigation }) => {
             </View>
         );
     }
-    
 
     // Renderizar el recuadro de estado del usuario
     function renderEstadoUsuario() {
@@ -95,7 +83,7 @@ const Home = ({ navigation }) => {
             Adulto_mayor: 350,
             Chofer: 600,
         };
-    
+
         return (
             <View style={styles.estadoUsuarioContainer}>
                 {user?.estado === "Pendiente" ? (
@@ -109,17 +97,13 @@ const Home = ({ navigation }) => {
                         ${tarifa[user?.tipo_usuario] || 0}.
                     </Text>
                 ) : (
-                    <Text style={styles.estadoUsuarioText}>
-                        Sin información del estado.
-                    </Text>
+                    <Text style={styles.estadoUsuarioText}>Sin información del estado.</Text>
                 )}
             </View>
         );
     }
-    
-    
 
-    // Renderizar historial con estilo mejorado
+    // Renderizar historial
     function renderHistorialPublicidad() {
         return (
             <View style={styles.historialPublicidadContainer}>
@@ -154,14 +138,12 @@ const Home = ({ navigation }) => {
                         style={styles.verHistorialButton}
                         onPress={() => navigation.navigate("HistorialScreen")}
                     >
-                        <Text style={styles.verHistorialText}>
-                            Ver Historial Completo
-                        </Text>
+                        <Text style={styles.verHistorialText}>Ver Historial Completo</Text>
                     </TouchableOpacity>
                 </View>
                 <View style={styles.publicidadContainer}>
                     <Image
-                        source={require('../assets/bannerHamb.gif')} // Ruta al archivo GIF
+                        source={require("../assets/bannerHamb.gif")}
                         style={styles.publicidadImage}
                         contentFit="cover"
                     />

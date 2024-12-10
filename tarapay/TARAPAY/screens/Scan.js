@@ -9,7 +9,6 @@ export default function ScanScreen({ navigation }) {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
   const { user, setUser } = useContext(UserContext); // Obtenemos los datos del usuario desde el contexto
-  const { user, setUser } = useContext(UserContext); // Obtenemos los datos del usuario desde el contexto
 
   useEffect(() => {
     const getCameraPermissions = async () => {
@@ -37,7 +36,7 @@ export default function ScanScreen({ navigation }) {
             setScanned(false);
             return; // Salir si el usuario no tiene un RUT
         }        
-        const response = await axios.post("http://192.168.1.109:50587/transaction", {
+        const response = await axios.post("http://192.168.1.91:50587/transaction", {
             rutPasajero: user.rut, // Usamos el RUT del pasajero desde el contexto
             rutChofer,
             tipoUsuario: user.tipo_usuario, // También obtenemos el tipo de usuario desde el contexto
